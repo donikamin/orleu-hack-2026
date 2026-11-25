@@ -57,7 +57,7 @@ export default defineConfig({
       pako: r('./node_modules/pako'),
     },
   },
-  server: { fs: { allow: ['..'] } },
+  server: { fs: { allow: ['..'] }, proxy: { '/api': 'http://127.0.0.1:3001' } }, // API: npm run dev в корне
   test: {
     include: ['src/**/*.test.ts', '../shared/**/*.test.ts'],
     environment: 'node',
