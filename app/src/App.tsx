@@ -2,7 +2,8 @@ import { lazy, Suspense } from 'react';
 import { Link, Route, Routes } from 'react-router';
 import { useOnline } from './teacher/hooks';
 import Home from './Home';
-import StudentPlaceholder from './student/StudentPlaceholder';
+
+const StudentApp = lazy(() => import('./student/StudentApp'));
 
 // Экраны учителя грузятся отдельными кусками: ученику на слабой сети они не нужны.
 // Все куски всё равно кэшируются PWA и доступны офлайн.
@@ -41,7 +42,7 @@ export default function App() {
         <Suspense fallback={<p className="text-muted">Загрузка…</p>}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/student/*" element={<StudentPlaceholder />} />
+          <Route path="/student/*" element={<StudentApp />} />
           <Route path="/teacher" element={<TeacherHome />} />
           <Route path="/teacher/:code" element={<ClassLayout />}>
             <Route index element={<ClassMap />} />

@@ -3,7 +3,7 @@ import type { Attempt, Task } from '@shared/types';
 
 export class ApiUnavailable extends Error {}
 
-async function call<T>(path: string, init: RequestInit & { timeoutMs?: number } = {}): Promise<T> {
+export async function call<T>(path: string, init: RequestInit & { timeoutMs?: number } = {}): Promise<T> {
   if (typeof navigator !== 'undefined' && !navigator.onLine) throw new ApiUnavailable('Нет интернета');
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), init.timeoutMs ?? 15000);
