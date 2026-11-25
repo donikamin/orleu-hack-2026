@@ -40,14 +40,14 @@ export default function App() {
       </a>
       <header className="no-print sticky top-0 z-40 border-b border-line bg-paper/85 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2.5">
-          <Link to="/" className="flex min-h-11 items-center gap-2 text-lg font-extrabold tracking-tight text-ink">
+          <a href="/" className="flex min-h-11 items-center gap-2 text-lg font-extrabold tracking-tight text-ink">
             <img src="/favicon.svg" alt="" width={28} height={28} />
             <span translate="no">Oqy</span>
-          </Link>
+          </a>
           <nav aria-label="Главное" className="ml-2 flex items-center">
             <NavLink to="/teacher" className={topLink}>Учитель</NavLink>
             <NavLink to="/student" className={topLink}>Ученик</NavLink>
-            <a href="/home/" className="hidden min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-muted hover:text-ink sm:inline-flex">О проекте</a>
+            <a href="/" className="hidden min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-muted hover:text-ink sm:inline-flex">О проекте</a>
           </nav>
           <span className="flex-1" />
           <span

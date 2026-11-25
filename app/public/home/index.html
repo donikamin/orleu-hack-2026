@@ -17,13 +17,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/system.css">
-<link rel="stylesheet" href="assets/ui/cards.css">
-<link rel="stylesheet" href="assets/motion/motion.css">
-<link rel="stylesheet" href="assets/backgrounds/backgrounds.css">
-<link rel="stylesheet" href="assets/layout/layout.css">
-<link rel="stylesheet" href="assets/icons/icon.css">
-<link rel="stylesheet" href="assets/layout/demo.css">
+<link rel="stylesheet" href="/home/assets/system.css">
+<link rel="stylesheet" href="/home/assets/ui/cards.css">
+<link rel="stylesheet" href="/home/assets/motion/motion.css">
+<link rel="stylesheet" href="/home/assets/backgrounds/backgrounds.css">
+<link rel="stylesheet" href="/home/assets/layout/layout.css">
+<link rel="stylesheet" href="/home/assets/icons/icon.css">
+<link rel="stylesheet" href="/home/assets/layout/demo.css">
 <!-- deal: palette white-mint-tiles (start.mjs); type: manrope — третья пара раздачи, потому что у Funnel и Host Grotesk нет кириллицы -->
 <style>
 :root {
@@ -41,12 +41,12 @@
 }
 </style>
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
-<script src="assets/backgrounds/backgrounds.js"></script>
+<script src="/home/assets/backgrounds/backgrounds.js"></script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
-<link rel="modulepreload" href="assets/moments/moments.js">
-<link rel="modulepreload" href="assets/moments/lib.js">
-<link rel="modulepreload" href="assets/moments/pinned-chapters/moment.js">
-<link rel="modulepreload" href="assets/moments/liquid-hover/moment.js">
+<link rel="modulepreload" href="/home/assets/moments/moments.js">
+<link rel="modulepreload" href="/home/assets/moments/lib.js">
+<link rel="modulepreload" href="/home/assets/moments/pinned-chapters/moment.js">
+<link rel="modulepreload" href="/home/assets/moments/liquid-hover/moment.js">
 <style>
   /* окно интерфейса в hero (из кита hero-centred) */
 /* the frame's painted ground when WebGL is not there: sky, far hills, a lit near hill */
@@ -91,7 +91,7 @@
 <header class="nav nav--centre">
   <div class="wrap nav__bar">
     <a class="skip-link" href="#top">К содержимому</a>
-    <a class="nav__logo" href="#top"><span class="mark mark--initial" aria-hidden="true">O</span>Oqy</a>
+    <a class="nav__logo" href="#top" translate="no"><span class="mark mark--initial" aria-hidden="true">O</span>Oqy</a>
     <nav class="nav__links" aria-label="Главное">
       <div class="nav__item"><a class="nav__link" href="#why">Зачем</a></div>
       <div class="nav__item"><a class="nav__link" href="#how">Как работает</a></div>
@@ -99,6 +99,7 @@
       <div class="nav__item"><a class="nav__link" href="#faq">Вопросы</a></div>
     </nav>
     <div class="nav__actions">
+      <a class="nav__link" href="/teacher">Панель учителя</a>
       <a class="btn btn--primary" href="/demo">Открыть демо-класс</a>
     </div>
     <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Меню">
@@ -152,7 +153,7 @@
           <p class="t-lead">В стране 2 832 сельские школы. Интернет нужной скорости есть в 92% школ, а дома у ребёнка в ауле его часто нет совсем. Поэтому Oqy хранит задания и проверку в телефоне.</p>
         </div>
         <figure class="frame frame--photo span-6 start-7" data-moment="liquid-hover" data-moment-opts='{"strength": 0.7}'>
-          <img class="frame__img" src="assets/img/photo-f43777946-1280.jpg" srcset="assets/img/photo-f43777946-500.jpg 500w, assets/img/photo-f43777946-960.jpg 960w, assets/img/photo-f43777946-1280.jpg 1280w" sizes="(max-width: 1023px) 100vw, 50vw" width="1280" height="853" alt="Пастух с отарой в степи Казахстана, вдали горы" loading="lazy" decoding="async" data-source="stand-in" data-subject="казахстанская степь">
+          <img class="frame__img" src="/home/assets/img/photo-f43777946-1280.jpg" srcset="/home/assets/img/photo-f43777946-500.jpg 500w , /home/assets/img/photo-f43777946-960.jpg 960w , /home/assets/img/photo-f43777946-1280.jpg 1280w" sizes="(max-width: 1023px) 100vw, 50vw" width="1280" height="853" alt="Пастух с отарой в степи Казахстана, вдали горы" loading="lazy" decoding="async" data-source="stand-in" data-subject="казахстанская степь">
         </figure>
       </div>
     </div>
@@ -166,17 +167,17 @@
           <li class="mo-pc__step">
             <h3>Ученик решает задания в телефоне</h3>
             <p>Задания на три навыка PISA лежат в приложении: найти, понять, оценить. После ошибки он получает подсказку, а не ответ. Сеть не нужна.</p>
-            <figure class="mo-pc__visual"><img src="assets/img/photo-f96095093-960.jpg" alt="Сельская школа в Казахстане: двухэтажное здание у дороги" width="960" height="636"></figure>
+            <figure class="mo-pc__visual"><img src="/home/assets/img/photo-f96095093-960.jpg" alt="Сельская школа в Казахстане: двухэтажное здание у дороги" width="960" height="636"></figure>
           </li>
           <li class="mo-pc__step">
             <h3>Результат уходит учителю QR-кодом</h3>
             <p>Ученик показывает QR, учитель сканирует камерой. Код сжат до 800 байт и проверяется контрольной суммой, дубли не появятся.</p>
-            <figure class="mo-pc__visual"><img class="shot" src="assets/img/ui-qr.png" alt="Экран Oqy с QR-кодом результатов ученика" width="1280" height="800"></figure>
+            <figure class="mo-pc__visual"><img class="shot" src="/home/assets/img/ui-qr.png" alt="Экран Oqy с QR-кодом результатов ученика" width="1280" height="800"></figure>
           </li>
           <li class="mo-pc__step">
             <h3>Учитель видит карту класса</h3>
             <p>Ученики по трём навыкам, уровни от 1 до 5 и список тех, кто ошибается уверенно. Видно, кому что дать завтра.</p>
-            <figure class="mo-pc__visual"><img class="shot" src="assets/img/ui-map.png" alt="Карта класса в Oqy: ученики по навыкам найти, понять, оценить" width="1280" height="1394"></figure>
+            <figure class="mo-pc__visual"><img class="shot" src="/home/assets/img/ui-map.png" alt="Карта класса в Oqy: ученики по навыкам найти, понять, оценить" width="1280" height="1394"></figure>
           </li>
         </ol>
       </div>
@@ -194,12 +195,12 @@
           <article class="card card--row card--open span-6">
             <h3>Урок на доске</h3>
             <p>Задание на проекторе, голоса по поднятым рукам, подсказки по одной, ответ последним.</p>
-            <div class="panel"><img class="shot" src="assets/img/ui-lesson.png" alt="Режим урока на доске: задание про расписание автобуса и голоса класса" loading="lazy" width="1280" height="1188"></div>
+            <div class="panel"><img class="shot" src="/home/assets/img/ui-lesson.png" alt="Режим урока на доске: задание про расписание автобуса и голоса класса" loading="lazy" width="1280" height="1188"></div>
           </article>
           <article class="card card--row card--open span-6">
             <h3>Трудные задания</h3>
             <p>Где ошибается больше половины класса или ошибаются уверенно.</p>
-            <div class="panel"><img class="shot" src="assets/img/ui-tasks.png" alt="Разбор заданий: доля верных ответов, подсказок и уверенных ошибок" loading="lazy" width="1280" height="1621"></div>
+            <div class="panel"><img class="shot" src="/home/assets/img/ui-tasks.png" alt="Разбор заданий: доля верных ответов, подсказок и уверенных ошибок" loading="lazy" width="1280" height="1621"></div>
           </article>
         </div>
       </div>
@@ -207,12 +208,12 @@
         <article class="card card--row card--open span-6">
           <h3>Группы на завтра</h3>
           <p>Группы по слабому навыку: три задания и совет на 10 минут.</p>
-          <div class="panel"><img class="shot" src="assets/img/ui-tomorrow.png" alt="Группы учеников по слабому навыку с заданиями" loading="lazy" width="1280" height="866"></div>
+          <div class="panel"><img class="shot" src="/home/assets/img/ui-tomorrow.png" alt="Группы учеников по слабому навыку с заданиями" loading="lazy" width="1280" height="866"></div>
         </article>
         <article class="card card--row card--open span-6">
           <h3>Задания из страницы учебника</h3>
           <p>Фото страницы превращается в 3–6 заданий PISA с подсказками и ключом.</p>
-          <div class="panel"><img class="shot" src="assets/img/ui-map.png" alt="Карта класса после раздачи заданий" loading="lazy" width="1280" height="1394" style="object-position: right top"></div>
+          <div class="panel"><img class="shot" src="/home/assets/img/ui-map.png" alt="Карта класса после раздачи заданий" loading="lazy" width="1280" height="1394" style="object-position: right top"></div>
         </article>
       </div>
     </div>
@@ -253,14 +254,14 @@
       </div>
       <div class="footer__legal">
         <span>&copy; 2026 Oqy</span>
-        <a class="credits" href="credits.html">Фото: Wikimedia Commons</a>
+        <a class="credits" href="/home/credits.html">Фото: Wikimedia Commons</a>
       </div>
     </div>
   </div>
 </footer>
 
-<script type="module" src="assets/system.js"></script>
-<script type="module" src="assets/motion/motion.js"></script>
-<script type="module" src="assets/layout/layout.js"></script>
+<script type="module" src="/home/assets/system.js"></script>
+<script type="module" src="/home/assets/motion/motion.js"></script>
+<script type="module" src="/home/assets/layout/layout.js"></script>
 </body>
 </html>
