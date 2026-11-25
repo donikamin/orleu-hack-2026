@@ -6,10 +6,10 @@ import { level } from '@shared/elo';
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
 const VARIANT: Record<Variant, string> = {
-  primary: 'bg-brand text-white hover:bg-brand-strong disabled:bg-brand/40',
+  primary: 'bg-brand text-on-brand hover:bg-brand-strong disabled:bg-brand/40',
   secondary: 'bg-surface text-ink border border-line hover:border-ink/30 disabled:text-muted',
   ghost: 'text-brand hover:bg-brand-soft disabled:text-muted',
-  danger: 'bg-danger text-white hover:bg-danger/90',
+  danger: 'bg-danger text-on-brand hover:bg-danger/90',
 };
 
 const BTN = 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2 font-semibold transition-colors disabled:cursor-not-allowed';
@@ -96,7 +96,7 @@ export function Field({ label, hint, children }: { label: string; hint?: string;
 }
 
 export const inputClass =
-  'w-full min-h-11 rounded-xl border border-line bg-surface px-3 py-2 text-base text-ink placeholder:text-muted/70 focus:border-brand focus:outline-none';
+  'w-full min-h-11 rounded-xl border border-line bg-surface px-3 py-2 text-base text-ink placeholder:text-muted/70 focus:border-brand';
 
 export function Notice({ tone = 'neutral', children }: { tone?: 'neutral' | 'danger' | 'brand'; children: ReactNode }) {
   const t = { neutral: 'bg-accent-soft border-accent/20', danger: 'bg-danger-soft border-danger/20 text-danger', brand: 'bg-brand-soft border-brand/20' }[tone];

@@ -93,11 +93,11 @@ export default function TeacherHome() {
           <h2 className="mb-4 text-lg font-bold">Новый класс</h2>
           <form onSubmit={create} className="space-y-4">
             <Field label="Название" hint="Например: 8 «Б», чтение">
-              <input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} required maxLength={40} autoComplete="off" />
+              <input name="className" className={inputClass} value={name} onChange={(e) => setName(e.target.value)} required maxLength={40} autoComplete="off" />
             </Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Класс">
-                <select className={inputClass} value={grade} onChange={(e) => setGrade(Number(e.target.value) as 7 | 8 | 9)}>
+                <select name="grade" className={inputClass} value={grade} onChange={(e) => setGrade(Number(e.target.value) as 7 | 8 | 9)}>
                   <option value={7}>7</option>
                   <option value={8}>8</option>
                   <option value={9}>9</option>
@@ -105,6 +105,8 @@ export default function TeacherHome() {
               </Field>
               <Field label="Учеников">
                 <input
+                  name="size"
+                  autoComplete="off"
                   className={inputClass}
                   type="number"
                   inputMode="numeric"

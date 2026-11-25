@@ -26,11 +26,11 @@ export default function Home() {
         </Link>
         <Link
           to="/teacher"
-          className="group rounded-[var(--radius-card)] border border-brand bg-brand p-6 text-white transition-colors hover:bg-brand-strong"
+          className="group rounded-[var(--radius-card)] border border-brand bg-brand p-6 text-on-brand transition-colors hover:bg-brand-strong"
         >
-          <p className="text-sm font-semibold text-white/70">Для учителя</p>
+          <p className="text-sm font-semibold text-on-brand/75">Для учителя</p>
           <p className="mt-1 text-2xl font-extrabold">Я учитель</p>
-          <p className="mt-2 text-white/80">Карта класса, сканер результатов, задания PISA из фото страницы учебника.</p>
+          <p className="mt-2 text-on-brand/85">Карта класса, сканер результатов, задания PISA из фото страницы учебника.</p>
           <p className="mt-4 font-semibold group-hover:underline">Открыть панель →</p>
         </Link>
       </div>

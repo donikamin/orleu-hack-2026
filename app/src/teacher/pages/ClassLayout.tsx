@@ -8,13 +8,33 @@ import { fetchClassFromServer } from '../api';
 import type { ClassContext } from '../hooks';
 import { Badge, Button, EmptyState, Notice } from '../../ui';
 
-const TABS = [
-  { to: '', label: 'Карта класса', end: true },
-  { to: 'scan', label: 'Сканировать QR' },
-  { to: 'photo', label: 'Фото → задания' },
-  { to: 'assign', label: 'Выдать задание' },
-  { to: 'misconceptions', label: 'Уверенно ошибаются' },
-  { to: 'tomorrow', label: 'Что делать завтра' },
+const GROUPS: { title: string; items: { to: string; label: string; end?: boolean }[] }[] = [
+  {
+    title: 'Анализ',
+    items: [
+      { to: '', label: 'Карта класса', end: true },
+      { to: 'tasks', label: 'Трудные задания' },
+      { to: 'trend', label: 'Динамика' },
+      { to: 'misconceptions', label: 'Уверенно ошибаются' },
+    ],
+  },
+  {
+    title: 'Урок',
+    items: [
+      { to: 'tomorrow', label: 'Что делать завтра' },
+      { to: 'lesson', label: 'Урок на доске' },
+      { to: 'assign', label: 'Выдать задание' },
+      { to: 'photo', label: 'Фото → задания' },
+    ],
+  },
+  {
+    title: 'Данные',
+    items: [
+      { to: 'scan', label: 'Сканировать QR' },
+      { to: 'reports', label: 'Отчёты для собрания' },
+      { to: 'data', label: 'Плакат, экспорт, копия' },
+    ],
+  },
 ];
 
 export default function ClassLayout() {
@@ -84,26 +104,37 @@ export default function ClassLayout() {
           <Notice tone={syncMsg.tone}>{syncMsg.text}</Notice>
         </div>
       )}
-      <nav aria-label="Разделы класса" className="no-print -mx-4 mb-6 overflow-x-auto px-4">
-        <ul className="flex min-w-max gap-1 border-b border-line">
-          {TABS.map((t) => (
-            <li key={t.to}>
-              <NavLink
-                to={t.to}
-                end={t.end}
-                className={({ isActive }) =>
-                  `-mb-px inline-block border-b-2 px-3 py-2.5 text-sm font-semibold whitespace-nowrap ${
-                    isActive ? 'border-brand text-brand' : 'border-transparent text-muted hover:text-ink'
-                  }`
-                }
-              >
-                {t.label}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <Outlet context={ctx} />
+      <div className="lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-8">
+        <nav aria-label="Разделы класса" className="no-print -mx-4 mb-6 overflow-x-auto px-4 lg:mx-0 lg:mb-0 lg:overflow-visible lg:px-0">
+          <div className="flex min-w-max gap-6 lg:sticky lg:top-20 lg:min-w-0 lg:flex-col lg:gap-5">
+            {GROUPS.map((g) => (
+              <div key={g.title}>
+                <p className="mb-1 px-3 text-xs font-bold uppercase tracking-wider text-muted">{g.title}</p>
+                <ul className="flex gap-1 lg:flex-col">
+                  {g.items.map((t) => (
+                    <li key={t.to}>
+                      <NavLink
+                        to={t.to}
+                        end={t.end}
+                        className={({ isActive }) =>
+                          `flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold whitespace-nowrap transition-colors ${
+                            isActive ? 'bg-brand-soft text-brand' : 'text-muted hover:bg-raised hover:text-ink'
+                          }`
+                        }
+                      >
+                        {t.label}
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </nav>
+        <div className="min-w-0">
+          <Outlet context={ctx} />
+        </div>
+      </div>
     </>
   );
 }

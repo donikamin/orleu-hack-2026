@@ -48,7 +48,7 @@ export default function AssignPage() {
                 type="button"
                 aria-pressed={filter === s}
                 onClick={() => setFilter(s)}
-                className={`min-h-9 rounded-lg px-3 font-semibold ${filter === s ? 'bg-brand text-white' : 'bg-paper text-muted hover:text-ink'}`}
+                className={`min-h-9 rounded-lg px-3 font-semibold ${filter === s ? 'bg-brand text-on-brand' : 'bg-paper text-muted hover:text-ink'}`}
               >
                 {s === 'all' ? 'Все' : SKILL_LABEL[s]}
               </button>
@@ -59,7 +59,7 @@ export default function AssignPage() {
           {shown.map((t) => (
             <li key={t.id}>
               <label className="flex min-h-14 cursor-pointer items-center gap-3 py-2">
-                <input type="checkbox" className="h-5 w-5 shrink-0 accent-[var(--color-brand)]" checked={selected.has(t.id)} onChange={() => toggle(t.id)} />
+                <input type="checkbox" name="task" value={t.id} className="h-5 w-5 shrink-0 accent-[var(--color-brand)]" checked={selected.has(t.id)} onChange={() => toggle(t.id)} />
                 <span className="min-w-0 flex-1">
                   <span className="block font-semibold">{t.title}</span>
                   <span className="block truncate text-sm text-muted">{t.question}</span>
@@ -78,7 +78,7 @@ export default function AssignPage() {
         <h2 className="text-lg font-bold">QR-код задания</h2>
         {qr ? (
           <>
-            <img src={qr} alt={`QR-код с заданиями: ${ids.length}`} className="mx-auto mt-4 w-full max-w-xs rounded-xl border border-line" />
+            <img src={qr} alt={`QR-код с заданиями: ${ids.length}`} width={560} height={560} className="mx-auto mt-4 h-auto w-full max-w-xs rounded-xl border border-line" />
             <p className="mt-3 text-center text-sm text-muted">
               {ids.length} заданий · ученики сканируют в приложении, интернет не нужен
             </p>

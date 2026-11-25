@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { level } from '@shared/elo';
 import { SKILLS, SKILL_HINT, SKILL_LABEL } from '@shared/types';
 import { classAverages, formatDate, type StudentSummary } from '../analytics';
@@ -10,7 +9,10 @@ type Sort = 'number' | 'weakest';
 
 export default function ClassMap() {
   const { cls, students, attempts } = useClass();
-  const [sort, setSort] = useState<Sort>('number');
+  // сортировка в адресе: ссылкой можно поделиться, «назад» работает
+  const [params, setParams] = useSearchParams();
+  const sort: Sort = params.get('sort') === 'weakest' ? 'weakest' : 'number';
+  const setSort = (s: Sort) => setParams(s === 'number' ? {} : { sort: s }, { replace: true });
   const avg = classAverages(students);
   const active = students.filter((s) => s.attempts > 0);
 
@@ -78,7 +80,7 @@ export default function ClassMap() {
                 type="button"
                 aria-pressed={sort === k}
                 onClick={() => setSort(k)}
-                className={`rounded-lg px-3 py-1.5 font-semibold ${sort === k ? 'bg-brand text-white' : 'text-muted hover:text-ink'}`}
+                className={`rounded-lg px-3 py-1.5 font-semibold ${sort === k ? 'bg-brand text-on-brand' : 'text-muted hover:text-ink'}`}
               >
                 {label}
               </button>

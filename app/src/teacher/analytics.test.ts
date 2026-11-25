@@ -60,3 +60,40 @@ describe('analytics', () => {
     expect(evaluate?.tasks.length).toBeGreaterThan(0);
   });
 });
+
+import { taskStats, toCsv, weeklyTrend } from './analytics';
+
+describe('новая аналитика', () => {
+  const week = 7 * 86400;
+  const base = 1_800_000_000;
+  const list = [
+    row(1, 'c-eva-01', 0, 3, base),
+    row(2, 'c-eva-01', 0, 3, base + 10),
+    row(3, 'c-eva-01', 1, 2, base + 20),
+    row(1, 'c-loc-01', 1, 3, base + week),
+    row(2, 'c-loc-01', 1, 2, base + week + 5),
+  ];
+
+  it('разбор заданий: уверенные ошибки помечаются как ложное представление и идут первыми', () => {
+    const s = taskStats(list, lookup);
+    expect(s[0].taskId).toBe('c-eva-01');
+    expect(s[0].verdict).toBe('guess');
+    expect(s[0].correctRate).toBeCloseTo(1 / 3);
+    expect(s.find((x) => x.taskId === 'c-loc-01')!.verdict).toBe('easy');
+  });
+
+  it('динамика: точки по неделям, пустой навык — null', () => {
+    const p = weeklyTrend(list, lookup);
+    expect(p.length).toBeGreaterThanOrEqual(2);
+    expect(p[0].values.evaluate).toBeCloseTo(1 / 3);
+    expect(p[p.length - 1].values.locate).toBe(1);
+    expect(p[0].values.understand).toBeNull();
+  });
+
+  it('CSV для русского Excel: BOM, «;», экранирование', () => {
+    const csv = toCsv([['a;b', 'he said "hi"'], [1, 2]]);
+    expect(csv.charCodeAt(0)).toBe(0xfeff);
+    expect(csv).toContain('"a;b";"he said ""hi"""');
+    expect(csv).toContain('\r\n1;2');
+  });
+});

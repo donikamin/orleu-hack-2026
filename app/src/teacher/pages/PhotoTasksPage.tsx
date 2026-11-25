@@ -117,7 +117,7 @@ export default function PhotoTasksPage() {
               onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
             />
           </Field>
-          {image && <img src={image.dataUrl} alt="Выбранная страница" className="max-h-80 rounded-xl border border-line object-contain" />}
+          {image && <img src={image.dataUrl} alt="Выбранная страница" width={1600} height={1200} className="h-auto max-h-80 w-auto rounded-xl border border-line object-contain" />}
           {image && <p className="text-xs text-muted">После сжатия: {image.kb} КБ (экономим трафик)</p>}
           <Field label="Язык заданий">
             <select className={inputClass} value={lang} onChange={(e) => setLang(e.target.value as 'ru' | 'kk')}>

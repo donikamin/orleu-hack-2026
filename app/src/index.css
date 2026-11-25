@@ -1,71 +1,176 @@
 @import 'tailwindcss';
 
-/* Дизайн-система Oqy. Спокойная «бумажная» основа для чтения, один акцент, без градиентов. */
+/*
+  Дизайн-система Oqy (часть C).
+  Палитра: ui-ux-pro-max, профиль № 179 «LMS / образование» — бирюзовый прогресс + янтарный акцент.
+  Шрифты: Golos Text (интерфейс; кириллица и казахские буквы, cyrillic-ext) + Literata (тексты заданий).
+  Правила: контраст текста ≥ 4.5:1 в обеих темах, цели касания ≥ 44px, без фиолетового.
+*/
 @theme {
-  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Golos Text', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Literata', Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  --color-paper: #f7f5ef;
+  --color-paper: #f6f8f7;
   --color-surface: #ffffff;
-  --color-ink: #1c1f1a;
-  --color-muted: #5f6659;
-  --color-line: #e3e0d6;
+  --color-raised: #eef3f1;
+  --color-ink: #10201e;
+  --color-muted: #4b5a58;
+  --color-line: #dce5e2;
 
-  --color-brand: #14532d;
-  --color-brand-strong: #0f3f22;
-  --color-brand-soft: #e4efe6;
+  --color-brand: #0f766e;
+  --color-brand-strong: #115e59;
+  --color-brand-soft: #dff5f0;
+  --color-on-brand: #ffffff;
   --color-accent: #b45309;
   --color-accent-soft: #fdf1df;
   --color-danger: #b42318;
   --color-danger-soft: #fdeceb;
+  --color-mint: #a1ffcb;
 
-  /* Уровни навыка 1…5: одна гамма, читается и без цвета (в ячейке всегда цифра) */
-  --color-lv1: #f3e3e1;
-  --color-lv2: #f7ecd6;
-  --color-lv3: #eef0dc;
-  --color-lv4: #cfe5d2;
-  --color-lv5: #9fcdaa;
+  /* Уровни навыка 1…5: одна последовательная гамма (тёплый → бирюзовый); в ячейке всегда цифра */
+  --color-lv1: #fbe3df;
+  --color-lv2: #fcecd3;
+  --color-lv3: #eef1dc;
+  --color-lv4: #c9ebde;
+  --color-lv5: #8fd9c0;
 
-  --radius-card: 14px;
+  --radius-card: 16px;
+  --shadow-card: 0 1px 2px rgb(16 32 30 / 0.04), 0 8px 24px -12px rgb(16 32 30 / 0.12);
+}
+
+/* Тёмная тема: по системной настройке или по переключателю (data-theme на <html>) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-paper: #0c1413;
+    --color-surface: #131e1c;
+    --color-raised: #1a2725;
+    --color-ink: #e6efec;
+    --color-muted: #9fb1ad;
+    --color-line: #263533;
+    --color-brand: #2dd4bf;
+    --color-brand-strong: #5eead4;
+    --color-brand-soft: #123a35;
+    --color-on-brand: #062320;
+    --color-accent: #fbbf24;
+    --color-accent-soft: #3a2a10;
+    --color-danger: #f97066;
+    --color-danger-soft: #3d1715;
+    --color-lv1: #4a2420;
+    --color-lv2: #4a3518;
+    --color-lv3: #36391f;
+    --color-lv4: #1d4a3e;
+    --color-lv5: #1f6b58;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --color-paper: #0c1413;
+  --color-surface: #131e1c;
+  --color-raised: #1a2725;
+  --color-ink: #e6efec;
+  --color-muted: #9fb1ad;
+  --color-line: #263533;
+  --color-brand: #2dd4bf;
+  --color-brand-strong: #5eead4;
+  --color-brand-soft: #123a35;
+  --color-on-brand: #062320;
+  --color-accent: #fbbf24;
+  --color-accent-soft: #3a2a10;
+  --color-danger: #f97066;
+  --color-danger-soft: #3d1715;
+  --color-lv1: #4a2420;
+  --color-lv2: #4a3518;
+  --color-lv3: #36391f;
+  --color-lv4: #1d4a3e;
+  --color-lv5: #1f6b58;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
+  color-scheme: dark;
 }
 
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    color-scheme: light;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  select {
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+  }
+  kbd {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    border: 1px solid currentColor;
+    border-radius: 6px;
+    padding: 0 0.35em;
+    opacity: 0.7;
   }
   body {
     @apply bg-paper text-ink font-sans antialiased;
     font-size: 16px;
-    line-height: 1.5;
+    line-height: 1.55;
+    font-variant-numeric: tabular-nums;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+    letter-spacing: -0.015em;
   }
   :focus-visible {
     outline: 3px solid var(--color-accent);
     outline-offset: 2px;
     border-radius: 6px;
   }
+  /* Фокус не прячется под липкой шапкой (WCAG 2.4.11) */
+  html {
+    scroll-padding-top: 80px;
+  }
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
   }
 }
 
-/* Текст для чтения в заданиях (часть A): засечки, 18px, свободная строка. Использование: className="text-read" */
+/* Текст для чтения в заданиях (часть A): засечки, 18px, свободная строка. className="text-read" */
 @utility text-read {
   font-family: var(--font-serif);
   font-size: 1.125rem;
   line-height: 1.7;
 }
 
+/* Спокойное появление контента экрана (один раз, без анимации при прокрутке) */
+@keyframes oqy-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@utility animate-rise {
+  animation: oqy-rise 0.32s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
 @media print {
   .no-print {
     display: none !important;
   }
-  body {
-    background: #fff;
+  :root {
+    --color-paper: #fff;
+    --color-surface: #fff;
+    --color-ink: #000;
   }
   .print-page {
     break-after: page;
