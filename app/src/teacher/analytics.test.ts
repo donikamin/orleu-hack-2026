@@ -18,9 +18,9 @@ const row = (number: number, taskId: string, score: 0 | 0.5 | 1, confidence?: 1 
 });
 
 describe('pack', () => {
-  it('9 стартовых заданий, по 3 на навык, все с 3 подсказками', () => {
-    expect(PACK).toHaveLength(9);
-    for (const s of ['locate', 'understand', 'evaluate']) expect(PACK.filter((t) => t.skill === s)).toHaveLength(3);
+  it('45 заданий по-русски (15 на навык) и 9 по-казахски, все с 3 подсказками', () => {
+    expect(PACK).toHaveLength(54);
+    for (const s of ['locate', 'understand', 'evaluate']) expect(PACK.filter((t) => t.skill === s && t.lang === 'ru')).toHaveLength(15);
     for (const t of PACK) expect(t.hints).toHaveLength(3);
   });
   it('taskRef: число → id из пакета, строка → как есть', () => {
