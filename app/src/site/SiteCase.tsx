@@ -11,7 +11,7 @@ const BARS = [
 export default function SiteCase() {
   return (
     <section className="site-screen" aria-labelledby="case-h">
-      <p className="site-kicker">01 · Задача кейса</p>
+      <p className="site-kicker">Задача кейса</p>
       <div className="mt-6 grid flex-1 items-center gap-10 lg:grid-cols-[1.1fr_1fr]">
         <div>
           <h1 id="case-h" className="display text-[clamp(44px,5.6vw,88px)]">

@@ -63,7 +63,7 @@ export function seedDemoClass(): Promise<string> {
 
 async function doSeed(): Promise<string> {
   await db.transaction('rw', db.classes, db.attempts, async () => {
-    await db.classes.put({ code: DEMO_CODE, name: 'Демо: 8 «Б», чтение', grade: 8, size: 14, teacherKey: 'DEMO-KEY', createdAt: Date.now(), synced: false });
+    await db.classes.put({ code: DEMO_CODE, name: 'Пример класса: 8 «Б»', grade: 8, size: 14, teacherKey: 'DEMO-KEY', createdAt: Date.now(), synced: false });
     await db.attempts.where('classCode').equals(DEMO_CODE).delete();
   });
   for (let n = 1; n <= 12; n++) await saveAttempts(DEMO_CODE, n, demoAttemptsFor(n), 'qr');

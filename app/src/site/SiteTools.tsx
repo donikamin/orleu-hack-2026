@@ -13,14 +13,14 @@ const TILES = [
 export default function SiteTools() {
   return (
     <section className="site-screen" aria-labelledby="tools-h">
-      <p className="site-kicker">04 · Для учителя</p>
+      <p className="site-kicker">Для учителя</p>
       <div className="mt-6 flex flex-wrap items-end justify-between gap-6">
         <h1 id="tools-h" className="display text-[clamp(44px,5.2vw,84px)]">
           Один класс.
           <br />
           Пять инструментов.
         </h1>
-        <Link to="/demo" className="site-btn site-btn--solid">Открыть демо-класс →</Link>
+        <Link to="/demo" className="site-btn site-btn--solid">Открыть пример класса →</Link>
       </div>
       <div className="mt-8 grid flex-1 auto-rows-[minmax(180px,1fr)] gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {TILES.map((t) => (

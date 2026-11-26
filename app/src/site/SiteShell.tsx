@@ -4,13 +4,17 @@
 import { Suspense, useEffect } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
 import { ThemeToggle } from '../ui/ThemeToggle';
+import './site.css';
 
 export const SCREENS = [
   { to: '/', label: 'Главная', short: 'Главная', icon: 'M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z' },
-  { to: '/case', label: 'Задача кейса', short: 'Кейс', icon: 'M4 20V10M10 20V4M16 20v-7M22 20H2' },
-  { to: '/try', label: 'Решить задание', short: 'Задание', icon: 'M9 12l2 2 4-4M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z' },
-  { to: '/how', label: 'Как работает', short: 'Как', icon: 'M5 12h14M13 6l6 6-6 6' },
-  { to: '/tools', label: 'Для учителя', short: 'Учителю', icon: 'M4 5h16v11H4zM8 20h8M12 16v4' },
+  { to: '/tutor', label: 'ИИ-наставник', short: 'ИИ', icon: 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z' },
+  { to: '/math', label: 'Математика', short: 'Матем.', icon: 'M5 3h14v18H5zM8 7h8M8 11h2M12 11h2M8 15h2M12 15h2' },
+  { to: '/train', label: 'Чтение', short: 'Чтение', icon: 'M4 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-5a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h6z' },
+  { to: '/lessons', label: 'Уроки', short: 'Уроки', icon: 'M4 20h4v-4h4v-4h4V8h4' },
+  { to: '/me', label: 'Мой кабинет', short: 'Кабинет', icon: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0' },
+  { to: '/offline', label: '2G и QR', short: 'QR', icon: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 18h2v2h-2z' },
+  { to: '/tools', label: 'Для учителя', short: 'Учитель', icon: 'M4 5h16v11H4zM8 20h8M12 16v4' },
 ] as const;
 
 function Icon({ d }: { d: string }) {
@@ -25,7 +29,7 @@ export function NextScreen() {
   const { pathname } = useLocation();
   const i = SCREENS.findIndex((s) => s.to === pathname);
   const next = SCREENS[i + 1];
-  if (!next) return <Link to="/demo" className="site-next">Открыть демо-класс <span aria-hidden="true">→</span></Link>;
+  if (!next) return <Link to="/demo" className="site-next">Открыть пример класса <span aria-hidden="true">→</span></Link>;
   return (
     <Link to={next.to} className="site-next">
       Дальше: {next.label} <span aria-hidden="true">→</span>
@@ -42,6 +46,7 @@ export default function SiteShell() {
     const onKey = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLElement && e.target.closest('input, textarea, select, [contenteditable]')) return;
       const i = SCREENS.findIndex((s) => s.to === pathname);
+      if (i < 0) return; // внутри задания или текста стрелки не листают экраны
       if (e.key === 'ArrowRight' && i < SCREENS.length - 1) navigate(SCREENS[i + 1].to);
       if (e.key === 'ArrowLeft' && i > 0) navigate(SCREENS[i - 1].to);
     };
@@ -61,8 +66,8 @@ export default function SiteShell() {
         </Link>
         <nav className="site-nav">
           {SCREENS.map((s, i) => (
-            <NavLink key={s.to} to={s.to} end className="site-nav__item">
-              <span className="site-nav__num" aria-hidden="true">0{i + 1}</span>
+            <NavLink key={s.to} to={s.to} end={s.to === '/'} className="site-nav__item">
+              <span className="site-nav__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
               <Icon d={s.icon} />
               <span className="site-nav__label">{s.label}</span>
               <span className="site-nav__short">{s.short}</span>
@@ -70,7 +75,7 @@ export default function SiteShell() {
           ))}
         </nav>
         <div className="site-rail__foot">
-          <Link to="/demo" className="site-btn site-btn--accent w-full">Демо-класс</Link>
+          <Link to="/demo" className="site-btn site-btn--accent w-full">Пример класса</Link>
           <Link to="/teacher" className="site-btn site-btn--ghost w-full">Мои классы</Link>
           <ThemeToggle />
         </div>
