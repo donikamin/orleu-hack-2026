@@ -88,10 +88,10 @@ function QrScreen({ me, list, onClose, onScanned }: { me: StudentRow; list: Stud
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-white" role="dialog" aria-modal="true" aria-label="QR-код для учителя">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-surface" role="dialog" aria-modal="true" aria-label="QR-код для учителя">
       <div className="mx-auto flex min-h-full max-w-xl flex-col items-center justify-center gap-3 p-3 text-center">
         <p className="text-sm font-semibold">Класс {me.classCode} · № {me.number} · результатов: {list.length}</p>
-        {error ? <Notice tone="danger">Не получилось нарисовать QR. Покажи учителю текст кода ниже.</Notice> : images[i] && <img src={images[i]} alt={`QR-код, часть ${i + 1} из ${n}`} className="w-full max-w-[min(100%,68dvh)]" />}
+        {error ? <Notice tone="danger">Не получилось нарисовать QR. Покажи учителю текст кода ниже.</Notice> : images[i] && <img src={images[i]} alt={`QR-код, часть ${i + 1} из ${n}`} className="w-full max-w-[min(100%,68dvh)] rounded-xl bg-white" />}
         <p className="text-sm text-muted">Сделай экран ярче и держи телефон ровно.</p>
         {n > 1 && (
           <div className="flex items-center gap-2">

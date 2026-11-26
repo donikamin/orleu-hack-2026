@@ -31,9 +31,9 @@ export async function loadTasks(): Promise<Task[]> {
   return [...PACK, ...extra.filter((t) => !bundled.has(t.id))];
 }
 
-export async function refreshPack(): Promise<void> {
+export async function refreshPack(classCode?: string): Promise<void> {
   try {
-    const data = await fetchPack();
+    const data = await fetchPack(classCode);
     if (Array.isArray(data)) await db.pack.bulkPut(data.filter(isTask));
   } catch {
     // нет сети или сервера: работаем на том, что есть

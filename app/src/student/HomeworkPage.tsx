@@ -4,6 +4,7 @@ import QrScanner from 'qr-scanner';
 import { decodeAssignment, QrDecodeError } from '@shared/qr-protocol';
 import type { Task } from '@shared/types';
 import { db, type StudentRow } from '../lib/db';
+import { loadTasks, refreshPack } from './tasks';
 import { Button, ButtonLink, Card, Field, inputClass, Notice, PageHeader } from '../ui';
 
 type Msg = { tone: 'brand' | 'danger'; text: string };
@@ -26,7 +27,12 @@ export default function HomeworkPage({ me, tasks }: { me: StudentRow; tasks: Tas
     try {
       const { classCode, taskIds } = decodeAssignment(text);
       if (classCode !== me.classCode) throw new QrDecodeError(`Это задание для класса ${classCode}, а у тебя ${me.classCode}.`);
-      const known = new Set(tasks.map((t) => t.id));
+      let known = new Set(tasks.map((t) => t.id));
+      if (taskIds.some((id) => !known.has(id)) && navigator.onLine) {
+        // задания из фото: пробуем сразу скачать их с сервера
+        await refreshPack(me.classCode);
+        known = new Set((await loadTasks()).map((t) => t.id));
+      }
       const ids = [...new Set(taskIds)].filter((id) => known.has(id));
       const missing = new Set(taskIds).size - ids.length;
       if (!ids.length) throw new QrDecodeError('Этих заданий нет в телефоне. Подключись к интернету, чтобы обновить базу, или попроси учителя распечатать их.');

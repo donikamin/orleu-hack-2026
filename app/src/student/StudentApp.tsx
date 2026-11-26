@@ -17,10 +17,16 @@ export default function StudentApp() {
 
   useEffect(() => {
     void navigator.storage?.persist?.(); // просим браузер не стирать прогресс
-    void refreshPack();
-    window.addEventListener('online', refreshPack);
-    return () => window.removeEventListener('online', refreshPack);
   }, []);
+
+  // задания класса из фото приходят вместе с базой, поэтому обновляем при смене класса
+  const classCode = me?.classCode;
+  useEffect(() => {
+    const run = () => void refreshPack(classCode);
+    run();
+    window.addEventListener('online', run);
+    return () => window.removeEventListener('online', run);
+  }, [classCode]);
 
   if (me === undefined || !tasks) return <p className="text-muted">Загрузка…</p>;
   if (!me) return <LoginPage tasks={tasks} />;

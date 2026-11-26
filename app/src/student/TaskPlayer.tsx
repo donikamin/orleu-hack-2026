@@ -107,7 +107,7 @@ export default function TaskPlayer({ task, askWhy, onAttempt, onNext }: { task: 
                 aria-selected={doc === i}
                 aria-controls="doc-panel"
                 onClick={() => setDoc(i)}
-                className={`min-h-11 rounded-xl border px-3 py-1 text-left text-sm font-semibold ${doc === i ? 'border-brand bg-brand text-white' : 'border-line bg-paper text-muted hover:text-ink'}`}
+                className={`min-h-11 rounded-xl border px-3 py-1 text-left text-sm font-semibold ${doc === i ? 'border-brand bg-brand text-on-brand' : 'border-line bg-paper text-muted hover:text-ink'}`}
               >
                 {i + 1}. {d.title}
               </button>
@@ -154,7 +154,7 @@ export default function TaskPlayer({ task, askWhy, onAttempt, onNext }: { task: 
                           aria-pressed={tricks[i] === k}
                           disabled={locked}
                           onClick={() => setTricks((t) => ({ ...t, [i]: k }))}
-                          className={`min-h-10 rounded-full border px-3 text-sm font-semibold ${tricks[i] === k ? 'border-accent bg-accent text-white' : 'border-line bg-paper text-muted'}`}
+                          className={`min-h-10 rounded-full border px-3 text-sm font-semibold ${tricks[i] === k ? 'border-accent bg-accent text-on-brand' : 'border-line bg-paper text-muted'}`}
                         >
                           {k}
                         </button>

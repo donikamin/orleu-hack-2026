@@ -29,4 +29,5 @@ export async function checkWhy(taskId: string, reason: string): Promise<{ ok: bo
 
 export const syncAttempts = (student: Student, attempts: Attempt[]) => post<unknown>('/api/sync', { student, attempts }, 15000);
 
-export const fetchPack = () => call<unknown>('/api/pack?v=1');
+/** База + задания класса из фото, которые учитель проверил и раздал. */
+export const fetchPack = (classCode?: string) => call<unknown>(`/api/pack?v=1${classCode ? `&class=${encodeURIComponent(classCode)}` : ''}`);
