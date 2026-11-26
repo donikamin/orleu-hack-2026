@@ -66,7 +66,7 @@ async function askGemini(q: Ask): Promise<string | undefined> {
         maxOutputTokens: q.maxTokens,
         abortSignal: AbortSignal.timeout(q.timeoutMs),
         // Короткое «обдумывание»: подсказка должна прийти за пару секунд
-        ...(m.startsWith('gemini-3') ? { thinkingConfig: { thinkingLevel: q.photo ? ThinkingLevel.LOW : ThinkingLevel.MINIMAL } } : {}),
+        ...(m.startsWith('gemini-3') ? { thinkingConfig: { thinkingLevel: ThinkingLevel.LOW } } : {}),
       },
     });
     const reason = res.candidates?.[0]?.finishReason;
