@@ -58,10 +58,7 @@ export const POST = handle(async (req) => {
 
   const r = await ask<{ readable: boolean; tasks: Draft[] }>({
     prompt: 'photo-tasks',
-    content: [
-      { type: 'image', source: { type: 'base64', media_type: type, data } },
-      { type: 'text', text: `Класс: ${b.grade}. Язык заданий: ${lang === 'kk' ? 'казахский' : 'русский'}.` },
-    ],
+    content: { imageBase64: { mediaType: type, data }, text: `Класс: ${b.grade}. Язык заданий: ${lang === 'kk' ? 'казахский' : 'русский'}.` },
     schema: SCHEMA,
     timeoutMs: 55_000,
     maxTokens: 12_000,
