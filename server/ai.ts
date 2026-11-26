@@ -6,7 +6,7 @@ import type { Task } from '../shared/types';
 import { HttpError } from './http';
 import { readContent } from './pack';
 
-const DEFAULT_MODEL = { claude: 'claude-opus-5-5', gemini: 'gemini-3.8-flash' };
+const DEFAULT_MODEL = { claude: 'claude-opus-5-5', gemini: 'gemini-3.5-flash-lite' };
 export const provider = (): 'claude' | 'gemini' => (process.env.AI_PROVIDER?.trim().toLowerCase() === 'gemini' ? 'gemini' : 'claude');
 export const hasAi = () => !!(provider() === 'gemini' ? process.env.GEMINI_API_KEY : process.env.ANTHROPIC_API_KEY);
 

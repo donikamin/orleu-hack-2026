@@ -69,7 +69,7 @@ describe('переключатель AI_PROVIDER=gemini', () => {
     expect(((await (await grade.POST(post('grade', { taskId: 'fam-01', answer: 'x' }))).json()) as { score: number }).score).toBe(1);
     expect(create).not.toHaveBeenCalled();
     const cfg = generate.mock.calls[0][0];
-    expect(cfg.model).toBe('gemini-3.8-flash');
+    expect(cfg.model).toBe('gemini-3.5-flash-lite');
     expect(JSON.stringify(cfg.config.responseJsonSchema)).not.toContain('additionalProperties');
     expect(cfg.config.systemInstruction).toContain('репетитор');
   });
