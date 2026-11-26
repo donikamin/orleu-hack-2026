@@ -12,7 +12,7 @@ const r = (p: string) => fileURLToPath(new URL(p, import.meta.url));
 const landingAtRoot = (): Plugin => {
   const rewrite = (req: { url?: string }, _res: unknown, next: () => void) => {
     const path = req.url?.split('?')[0];
-    if (path === '/' || path === '/home' || path === '/home/') req.url = '/home/index.html';
+    if (path === '/home' || path === '/home/') req.url = '/home/index.html';
     next();
   };
   return {
@@ -38,7 +38,7 @@ export default defineConfig({
         theme_color: '#0f766e',
         background_color: '#f6f8f7',
         display: 'standalone',
-        start_url: '/teacher',
+        start_url: '/',
         icons: [{ src: 'favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' }],
       },
       workbox: {

@@ -6,6 +6,7 @@ import { makeTaskLookup } from '../pack';
 import { summarizeClass } from '../analytics';
 import { fetchClassFromServer } from '../api';
 import type { ClassContext } from '../hooks';
+import { DemoGuide } from '../DemoGuide';
 import { Badge, Button, EmptyState, Notice } from '../../ui';
 
 const GROUPS: { title: string; items: { to: string; label: string; end?: boolean }[] }[] = [
@@ -99,6 +100,7 @@ export default function ClassLayout() {
           {syncing ? 'Обновляю…' : 'Обновить с сервера'}
         </Button>
       </div>
+      {cls.code === 'DEMO' && <DemoGuide />}
       {syncMsg && (
         <div className="no-print mb-4">
           <Notice tone={syncMsg.tone}>{syncMsg.text}</Notice>
