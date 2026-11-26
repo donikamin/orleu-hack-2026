@@ -59,3 +59,12 @@ export async function imageFileToBase64(file: File, maxSide = 1600): Promise<{ b
   const base64 = dataUrl.split(',')[1];
   return { base64, dataUrl, kb: Math.round((base64.length * 3) / 4 / 1024) };
 }
+
+/** Отдать проверенные учителем задания классу (часть B: POST /api/tasks). Ученики получат их через /api/pack?class=. */
+export function publishTasks(classCode: string, teacherKey: string, tasks: Task[]) {
+  return call<{ saved: number }>('/api/tasks', {
+    method: 'POST',
+    headers: { 'x-teacher-key': teacherKey },
+    body: JSON.stringify({ classCode, tasks }),
+  });
+}
