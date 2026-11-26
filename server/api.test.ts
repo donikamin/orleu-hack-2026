@@ -11,6 +11,15 @@ vi.mock('@anthropic-ai/sdk', async (orig) => {
   return { ...mod, default: Fake };
 });
 
+const generate = vi.fn();
+vi.mock('@google/genai', async (orig) => {
+  const mod = await orig<typeof import('@google/genai')>();
+  class Fake {
+    models = { generateContent: generate };
+  }
+  return { ...mod, GoogleGenAI: Fake };
+});
+
 import * as bot from '../api/bot';
 import * as classGet from '../api/class/[code]';
 import * as classNew from '../api/class/index';
@@ -43,6 +52,48 @@ beforeEach(() => {
   setStore(new MemoryStore());
   vi.stubEnv('ANTHROPIC_API_KEY', 'test');
   vi.spyOn(console, 'error').mockImplementation(() => {});
+});
+
+describe('переключатель AI_PROVIDER=gemini', () => {
+  beforeEach(() => {
+    generate.mockReset();
+    vi.stubEnv('AI_PROVIDER', 'gemini');
+    vi.stubEnv('GEMINI_API_KEY', 'test');
+  });
+  const gem = (v: unknown, finishReason = 'STOP') => generate.mockResolvedValueOnce({ text: JSON.stringify(v), candidates: [{ finishReason }] });
+
+  it('подсказка и проверка идут через Gemini, Claude не вызывается', async () => {
+    gem({ hint: 'По каким дням ходит выбранный рейс?' });
+    expect(await (await hint.POST(post('hint', { taskId: 'c-loc-01', answer: '', hintLevel: 0 }))).json()).toEqual({ hint: 'По каким дням ходит выбранный рейс?' });
+    gem({ met: [true, true, true, true], feedback: 'ок' });
+    expect(((await (await grade.POST(post('grade', { taskId: 'fam-01', answer: 'x' }))).json()) as { score: number }).score).toBe(1);
+    expect(create).not.toHaveBeenCalled();
+    const cfg = generate.mock.calls[0][0];
+    expect(cfg.model).toBe('gemini-3.8-flash');
+    expect(JSON.stringify(cfg.config.responseJsonSchema)).not.toContain('additionalProperties');
+    expect(cfg.config.systemInstruction).toContain('репетитор');
+  });
+  it('фото уходит картинкой, сложность без enum', async () => {
+    const jpeg = Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.alloc(200)]).toString('base64');
+    gem({ readable: false, tasks: [] });
+    expect((await photo.POST(post('photo-tasks', { imageBase64: jpeg, grade: 8, lang: 'ru' }))).status).toBe(422);
+    const { contents, config } = generate.mock.calls[0][0];
+    expect(contents[0].parts[0].inlineData).toEqual({ mimeType: 'image/jpeg', data: jpeg });
+    expect(JSON.stringify(config.responseJsonSchema)).toContain('"minimum":1');
+  });
+  it('без ключа Gemini и при блокировке — статическая подсказка; ключ Claude не считается', async () => {
+    const same = async () => expect(await (await hint.POST(post('hint', { taskId: 'c-loc-01', answer: '', hintLevel: 1 }))).json()).toEqual({ hint: pack()[0].hints[1] });
+    gem({ hint: 'x' }, 'SAFETY');
+    await same();
+    generate.mockRejectedValueOnce(Object.assign(new Error('t'), { name: 'TimeoutError' }));
+    await same();
+    vi.stubEnv('GEMINI_API_KEY', '');
+    await same();
+    vi.stubEnv('ANTHROPIC_API_KEY', '');
+    vi.stubEnv('GEMINI_API_KEY', 'test');
+    gem({ ok: true, feedback: 'да' });
+    expect((await why.POST(post('why', { taskId: 'c-loc-01', reason: 'потому что' }))).status).toBe(200);
+  });
 });
 
 describe('база заданий', () => {

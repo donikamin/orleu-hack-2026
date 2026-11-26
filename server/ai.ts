@@ -1,36 +1,105 @@
-// Единственное место, где вызывается Claude. Имена и номера учеников сюда не попадают.
+// Единственное место, где вызывается ИИ. Имена и номера учеников сюда не попадают.
+// Какой ИИ работает, решает AI_PROVIDER: claude (по умолчанию) или gemini. Остальной код об этом не знает.
 import Anthropic from '@anthropic-ai/sdk';
+import { ApiError, GoogleGenAI, ThinkingLevel, type Part } from '@google/genai';
 import type { Task } from '../shared/types';
 import { HttpError } from './http';
 import { readContent } from './pack';
 
-const DEFAULT_MODEL = 'claude-opus-5-5';
-export const hasAi = () => !!process.env.ANTHROPIC_API_KEY;
+const DEFAULT_MODEL = { claude: 'claude-opus-5-5', gemini: 'gemini-3.8-flash' };
+export const provider = (): 'claude' | 'gemini' => (process.env.AI_PROVIDER?.trim().toLowerCase() === 'gemini' ? 'gemini' : 'claude');
+export const hasAi = () => !!(provider() === 'gemini' ? process.env.GEMINI_API_KEY : process.env.ANTHROPIC_API_KEY);
 
 export interface Ask {
   prompt: string; // имя файла в content/prompts
-  content: string | Anthropic.Beta.BetaContentBlockParam[];
+  content: string | { text: string; imageBase64?: { mediaType: 'image/jpeg' | 'image/png' | 'image/webp'; data: string } };
   schema: Record<string, unknown>;
   timeoutMs: number;
   maxTokens: number;
   photo?: boolean;
 }
 
+const model = (q: Ask) => (q.photo ? process.env.AI_MODEL_PHOTO : process.env.AI_MODEL)?.trim() || DEFAULT_MODEL[provider()];
+
+function parse<T>(text: string | undefined): T {
+  try {
+    return JSON.parse(text ?? '') as T;
+  } catch {
+    throw new HttpError(502, 'ИИ вернул неполный ответ, попробуйте ещё раз');
+  }
+}
+
 export async function ask<T>(q: Ask): Promise<T> {
   if (!hasAi()) throw new HttpError(503, 'ИИ ещё не подключён');
-  const model = (q.photo ? process.env.AI_MODEL_PHOTO : process.env.AI_MODEL) || DEFAULT_MODEL;
+  return parse<T>(provider() === 'gemini' ? await askGemini(q) : await askClaude(q));
+}
+
+// Gemini принимает только часть JSON Schema: убираем то, на что он может ответить ошибкой.
+function geminiSchema(s: unknown): unknown {
+  if (Array.isArray(s)) return s.map(geminiSchema);
+  if (typeof s !== 'object' || s === null) return s;
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(s)) {
+    if (k === 'additionalProperties') continue;
+    if (k === 'enum' && (s as { type?: string }).type === 'integer') {
+      out.minimum = Math.min(...(v as number[]));
+      out.maximum = Math.max(...(v as number[]));
+      continue;
+    }
+    out[k] = geminiSchema(v);
+  }
+  return out;
+}
+
+async function askGemini(q: Ask): Promise<string | undefined> {
+  const m = model(q);
+  const c = q.content;
+  const parts: Part[] = typeof c === 'string' ? [{ text: c }] : [...(c.imageBase64 ? [{ inlineData: { mimeType: c.imageBase64.mediaType, data: c.imageBase64.data } }] : []), { text: c.text }];
+  try {
+    const res = await new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }).models.generateContent({
+      model: m,
+      contents: [{ role: 'user', parts }],
+      config: {
+        systemInstruction: readContent(`prompts/${q.prompt}.md`),
+        responseMimeType: 'application/json',
+        responseJsonSchema: geminiSchema(q.schema),
+        maxOutputTokens: q.maxTokens,
+        abortSignal: AbortSignal.timeout(q.timeoutMs),
+        // Короткое «обдумывание»: подсказка должна прийти за пару секунд
+        ...(m.startsWith('gemini-3') ? { thinkingConfig: { thinkingLevel: q.photo ? ThinkingLevel.LOW : ThinkingLevel.MINIMAL } } : {}),
+      },
+    });
+    const reason = res.candidates?.[0]?.finishReason;
+    if (res.promptFeedback?.blockReason || reason === 'SAFETY' || reason === 'PROHIBITED_CONTENT') throw new HttpError(422, 'ИИ не смог обработать этот текст');
+    return res.text;
+  } catch (e) {
+    if (e instanceof HttpError) throw e;
+    if ((e as Error).name === 'TimeoutError' || (e as Error).name === 'AbortError') throw new HttpError(504, 'ИИ отвечает слишком долго, попробуйте ещё раз');
+    if (e instanceof ApiError) {
+      console.error('Gemini API', e.status, e.message);
+      throw new HttpError(e.status === 429 ? 503 : 502, e.status === 429 ? 'ИИ перегружен, попробуйте через минуту' : 'ИИ сейчас недоступен');
+    }
+    throw e;
+  }
+}
+
+async function askClaude(q: Ask): Promise<string> {
+  const m = model(q);
+  const c = q.content;
+  const content: Anthropic.Beta.BetaContentBlockParam[] | string =
+    typeof c === 'string' ? c : [...(c.imageBase64 ? [{ type: 'image' as const, source: { type: 'base64' as const, media_type: c.imageBase64.mediaType, data: c.imageBase64.data } }] : []), { type: 'text', text: c.text }];
   // Повторы выключены: у ученика уже есть офлайн-замена, долго ждать незачем.
   const client = new Anthropic({ timeout: q.timeoutMs, maxRetries: 0 });
   let res: Anthropic.Beta.BetaMessage;
   try {
     res = await client.beta.messages.create({
-      model,
+      model: m,
       max_tokens: q.maxTokens,
       system: readContent(`prompts/${q.prompt}.md`),
       output_config: { effort: 'low', format: { type: 'json_schema', schema: q.schema } },
-      messages: [{ role: 'user', content: q.content }],
+      messages: [{ role: 'user', content }],
       // Если фильтр безопасности ошибочно отклонил учебный текст, тот же запрос выполнит запасная модель.
-      ...(model.includes('haiku') ? {} : { betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' as const }),
+      ...(m.includes('haiku') ? {} : { betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' as const }),
     });
   } catch (e) {
     if (e instanceof Anthropic.APIConnectionTimeoutError) throw new HttpError(504, 'ИИ отвечает слишком долго, попробуйте ещё раз');
@@ -42,12 +111,7 @@ export async function ask<T>(q: Ask): Promise<T> {
     throw e;
   }
   if (res.stop_reason === 'refusal') throw new HttpError(422, 'ИИ не смог обработать этот текст');
-  const text = res.content.map((b) => (b.type === 'text' ? b.text : '')).join('');
-  try {
-    return JSON.parse(text) as T;
-  } catch {
-    throw new HttpError(502, 'ИИ вернул неполный ответ, попробуйте ещё раз');
-  }
+  return res.content.map((b) => (b.type === 'text' ? b.text : '')).join('');
 }
 
 export const obj = (properties: Record<string, unknown>) => ({ type: 'object', properties, required: Object.keys(properties), additionalProperties: false });

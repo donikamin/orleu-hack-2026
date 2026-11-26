@@ -13,7 +13,10 @@ npm test && npm run typecheck       # в корне: тесты сервера
 ## Подключение (по порядку)
 
 1. **Supabase:** новый проект → SQL Editor → выполнить `supabase/schema.sql`. Project Settings → API: URL и service role (secret) key.
-2. **Anthropic Console:** ключ, лимит расходов. По умолчанию всё на `claude-opus-5-5`; дешевле подсказки и проверку: `AI_MODEL=claude-haiku-5-5`.
+2. **ИИ, один из двух:**
+   - Claude (по умолчанию): Anthropic Console → ключ в `ANTHROPIC_API_KEY`. Модель по умолчанию `claude-opus-5-5`; дешевле: `AI_MODEL=claude-haiku-5-5` и `AI_MODEL_PHOTO=claude-haiku-5-5`.
+   - Gemini: aistudio.google.com → ключ в `GEMINI_API_KEY` и `AI_PROVIDER=gemini`. Модель по умолчанию `gemini-3.8-flash`.
+   Переключиться: сменить `AI_PROVIDER` в Vercel и сделать Redeploy. Код менять не нужно, весь ИИ в `server/ai.ts`.
 3. **BotFather:** токен. `TELEGRAM_WEBHOOK_SECRET` и `CRON_SECRET` — любые случайные строки.
 4. **Vercel → Settings → Environment Variables:** все имена из `.env.example`, затем Redeploy.
 5. После деплоя один раз: `npm run bot:setup -- https://адрес.vercel.app`.
