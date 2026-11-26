@@ -1,5 +1,7 @@
 # Деплой на Vercel (делает капитан один раз, ~10 минут)
 
+> Нет желания подключать свой Vercel? Другой участник может развернуть сайт из своего аккаунта: [docs/deploy-iskender.md](deploy-iskender.md).
+
 1. Зайти на https://vercel.com и войти через GitHub (аккаунт `donikamin`).
 2. **Add New → Project → Import** репозиторий `orleu-hack-2026`.
 3. Настройки менять не нужно: всё уже в `vercel.json` (сборка `app/`, папка `app/dist`, функции из `/api`).
