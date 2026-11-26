@@ -7,6 +7,12 @@ import './index.css';
 
 registerSW({ immediate: true });
 
+// Android: запоминаем предложение установки, кнопка «Установить на телефон» в кабинете покажет его
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  (window as unknown as { __oqyInstall: Event }).__oqyInstall = e;
+});
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>

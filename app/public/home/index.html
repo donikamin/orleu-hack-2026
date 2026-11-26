@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="ru" data-type="software" data-radius="soft" data-ground="painting" data-buttons="solid" data-motion>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Oqy: ИИ-тренажёр чтения для 7–9 классов</title>
+<meta name="description" content="Задания на три навыка PISA, подсказки вместо готовых ответов и карта класса для учителя. Работает в сельской школе без интернета.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Oqy: ИИ-тренажёр чтения для 7–9 классов">
+<meta property="og:description" content="Подсказки вместо готовых ответов. Результаты учителю через QR-код, без интернета.">
+<meta property="og:image" content="share.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#ffffff">
+<meta name="site-kind" content="software">
+<meta name="page-type" content="software">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/home/assets/system.css">
+<link rel="stylesheet" href="/home/assets/ui/cards.css">
+<link rel="stylesheet" href="/home/assets/motion/motion.css">
+<link rel="stylesheet" href="/home/assets/backgrounds/backgrounds.css">
+<link rel="stylesheet" href="/home/assets/layout/layout.css">
+<link rel="stylesheet" href="/home/assets/icons/icon.css">
+<link rel="stylesheet" href="/home/assets/layout/demo.css">
+<!-- deal: palette white-mint-tiles (start.mjs); type: manrope — третья пара раздачи, потому что у Funnel и Host Grotesk нет кириллицы -->
+<style>
+:root {
+  --p-bg: #ffffff; --p-surface: #f3f3f3; --p-ink: #232323; --p-muted: #525252;
+  --p-accent: #a1ffcb; --p-accent-ink: #232323; --p-action: #232323; --p-action-ink: #ffffff;
+  --p-inv-bg: #232323; --p-inv-surface: #303030; --p-inv-ink: #ffffff; --p-inv-muted: #a4a4a4;
+  --p-inv-accent: #a1ffcb; --p-inv-accent-ink: #232323; --p-inv-action: #a1ffcb; --p-inv-action-ink: #232323;
+  --font-display: "Manrope", system-ui, sans-serif;
+  --font-text: "Manrope", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --display-weight: 500;
+  --display-tracking: -0.035em;
+  --display-tracking-xl: -0.045em;
+  --ly-scale: 0.98;
+}
+</style>
+<script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
+<script src="/home/assets/backgrounds/backgrounds.js"></script>
+<script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
+<link rel="modulepreload" href="/home/assets/moments/moments.js">
+<link rel="modulepreload" href="/home/assets/moments/lib.js">
+<link rel="modulepreload" href="/home/assets/moments/pinned-chapters/moment.js">
+<link rel="modulepreload" href="/home/assets/moments/liquid-hover/moment.js">
+<style>
+  /* окно интерфейса в hero (из кита hero-centred) */
+/* the frame's painted ground when WebGL is not there: sky, far hills, a lit near hill */
+.hero__window { background:
+  radial-gradient(120% 60% at 70% 118%, #6f7f3a 0 40%, transparent 41%),
+  radial-gradient(90% 50% at 10% 108%, #57703f 0 42%, transparent 43%),
+  radial-gradient(80% 40% at 60% 92%, #9fb2c4 0 40%, transparent 41%),
+  linear-gradient(#5f93cc, #a9c7e4 70%, #c8d6dd); }
+.d-win--dark .d-win__body { grid-template-columns: 250px 1fr; min-height: 420px; }
+.d-win--dark .d-win__bar b { color: #eceef0; font-weight: 500; } .d-win--dark .d-win__bar .sp { flex: 1; }
+/* the exchange stands in the window's top 260px: one-line question, the tool line, a two-line answer, its actions */
+.hero__window .d-chat { padding: 14px 18px; gap: 8px; }
+.hero__window .d-msg--me small { display: none; }
+.hero__window .d-msg--bot { max-width: 86%; }
+.hero__window .d-msg--bot small { display: inline; margin: 0 0 0 8px; white-space: nowrap; }
+@media (max-width: 639px) { .hero__window .d-win__bar .sp ~ span { display: none; } }
+.inbox { border-right: 1px solid rgb(255 255 255 / .07); padding: 10px; display: grid; align-content: start; gap: 2px; }
+.inbox .q { height: 34px; margin-bottom: 6px; border-radius: 9px; background: rgb(255 255 255 / .06); display: flex; align-items: center; padding: 0 10px; color: #7d8389; font-size: 13px; }
+.inbox .t { display: grid; grid-template-columns: 30px 1fr auto; gap: 1px 10px; padding: 9px 8px; border-radius: 9px; font-size: 13px; }
+.inbox .t.is-on { background: rgb(255 255 255 / .07); }
+.inbox .t i { grid-row: 1 / span 2; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font: 600 13px/1 var(--font-text); font-style: normal; color: #0c0d0f; }
+.inbox .t b { font-weight: 500; color: #eceef0; } .inbox .t time { color: #7d8389; font-size: 13px; }
+.inbox .t span { grid-column: 2 / -1; color: #8d9399; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.convo { display: grid; min-width: 0; align-content: start; }
+.d-msg--bot { background: #22262b; color: #e9ecee; }
+.acts { display: flex; gap: 8px; } .acts span { height: 30px; padding: 0 12px; border-radius: 99px; display: inline-flex; align-items: center; font-size: 13px; font-weight: 500; background: #f2f2f0; color: #0c0d0f; }
+.acts span + span { background: rgb(255 255 255 / .08); color: #e9ecee; }
+@media (max-width: 639px) { .d-win--dark .d-win__body { grid-template-columns: 1fr; } .inbox { display: none; } .hero__window .d-chat { font-size: 13px; padding: 12px 14px; } .hero__window .d-msg--bot small, .hero__window .d-tool { display: none; } }
+  /* кейс: полосы долей */
+  .case-stats { display: grid; gap: 14px; margin: 8px 0 0; }
+  .case-stats div { display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 16px; }
+  .case-stats dt { color: var(--p-muted); }
+  .case-stats dd { margin: 0; display: grid; grid-template-columns: 64px 1fr; align-items: center; gap: 12px; }
+  .case-stats b { font: 500 28px/1 var(--font-display); letter-spacing: -0.03em; }
+  .case-bar { height: 10px; border-radius: 99px; background: var(--p-surface); overflow: hidden; }
+  .case-bar i { display: block; height: 100%; border-radius: inherit; background: var(--p-ink); }
+  .case-stats .is-ref .case-bar i { background: var(--p-accent); }
+  /* живое задание */
+  .trainer { border: 1px solid rgb(0 0 0 / .08); border-radius: 20px; background: #fff; box-shadow: 0 30px 60px -36px rgb(0 0 0 / .35); overflow: hidden; }
+  .trainer__bar { display: flex; justify-content: space-between; padding: 12px 20px; font-size: 14px; color: var(--p-muted); border-bottom: 1px solid rgb(0 0 0 / .06); }
+  .trainer__net { background: var(--p-accent); color: var(--p-accent-ink); border-radius: 99px; padding: 2px 10px; font-weight: 600; }
+  .trainer__doc { margin: 20px 20px 0; padding: 16px 18px; background: var(--p-surface); border-radius: 12px; font: 400 17px/1.6 Georgia, serif; }
+  .trainer__doc-title { font: 600 14px/1.4 var(--font-text); color: var(--p-muted); margin: 0 0 6px; }
+  .trainer__doc p { margin: 0; }
+  .trainer__q { margin: 18px 20px 12px; font-weight: 600; font-size: 19px; line-height: 1.35; }
+  .trainer__opts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0 20px; }
+  .trainer__opt { min-height: 48px; border-radius: 12px; border: 1.5px solid rgb(0 0 0 / .12); background: #fff; font: 600 17px var(--font-text); color: var(--p-ink); cursor: pointer; transition: border-color .15s, background-color .15s, transform .15s; }
+  .trainer__opt:hover { border-color: var(--p-ink); transform: translateY(-1px); }
+  .trainer__opt:active { transform: translateY(0); }
+  .trainer__opt.is-wrong { border-color: #c2410c; background: #fff4ed; }
+  .trainer__opt.is-right { border-color: #15803d; background: var(--p-accent); }
+  .trainer__opt:disabled { cursor: default; transform: none; }
+  .trainer__feedback { margin: 14px 20px 0; min-height: 64px; }
+  .trainer__hint { padding: 12px 14px; border-left: 4px solid #c2410c; background: #fff4ed; border-radius: 10px; font-size: 16px; line-height: 1.45; }
+  .trainer__done { padding: 12px 14px; border-left: 4px solid #15803d; background: #ecfdf3; border-radius: 10px; font-size: 16px; line-height: 1.45; }
+  .trainer__skill { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; margin: 14px 20px 20px; font-size: 14px; color: var(--p-muted); }
+  .trainer__meter { height: 8px; background: var(--p-surface); border-radius: 99px; overflow: hidden; }
+  .trainer__meter i { display: block; height: 100%; background: var(--p-ink); border-radius: inherit; transition: width .6s cubic-bezier(.2,.7,.2,1); }
+  .trainer__skill b { color: var(--p-ink); }
+  .try-legend { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; font-size: 18px; }
+  /* соответствие кейсу */
+  .fit-rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgb(0 0 0 / .1); }
+  .fit-rows li { display: grid; grid-template-columns: 5fr 7fr; gap: 24px; padding: 22px 0; border-bottom: 1px solid rgb(0 0 0 / .1); }
+  .fit-rows__ask { font: 500 24px/1.25 var(--font-display); letter-spacing: -0.02em; }
+  .fit-rows__do { font-size: 18px; line-height: 1.5; color: var(--p-muted); }
+  /* гид по демо */
+  .demo-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; counter-reset: d; }
+  .demo-steps li { counter-increment: d; }
+  .demo-steps a { display: flex; flex-direction: column; gap: 8px; height: 100%; min-height: 180px; padding: 22px; border-radius: 16px; background: var(--p-surface); color: var(--p-ink); text-decoration: none; transition: transform .2s, background-color .2s; }
+  .demo-steps a::before { content: counter(d); font: 500 40px/1 var(--font-display); color: var(--p-muted); }
+  .demo-steps a:hover { transform: translateY(-2px); background: var(--p-accent); }
+  .demo-steps b { font-size: 19px; }
+  .demo-steps span { color: var(--p-muted); }
+  .shot--qr { object-position: 70% 40%; }
+  .shot--map { object-position: 30% 24%; }
+  @media (max-width: 1023px) { .demo-steps { grid-template-columns: 1fr 1fr; } .fit-rows li { grid-template-columns: 1fr; gap: 8px; } }
+  @media (max-width: 639px) { .trainer__opts { grid-template-columns: 1fr 1fr; } .case-stats div { grid-template-columns: 1fr; gap: 6px; } .demo-steps { grid-template-columns: 1fr; } .demo-steps a { min-height: 0; } }
+  @media (prefers-reduced-motion: reduce) { .trainer__opt, .trainer__meter i, .demo-steps a { transition: none; } }
+  /* page CSS: только то, что внутри визуалов */
+  .shot { display: block; width: 100%; height: 100%; object-fit: cover; object-position: left top; }
+  #teacher .panel { --p-h: 190px; }
+      @media (max-width: 639px) { #teacher .panel { --p-h: 200px; } </style>
+</head>
+<body>
+<!-- type: software
+     deal: hero centred (window), nav nav-centre, close close-type, footer footer-columns, rhythm space, buttons solid, mark initial, ground painterly-landscape in the hero window
+     moments: pinned-chapters (#how: три шага держатся на экране), liquid-hover (#why: фото степи) -->
+<header class="nav nav--centre">
+  <div class="wrap nav__bar">
+    <a class="skip-link" href="#top">К содержимому</a>
+    <a class="nav__logo" href="#top" translate="no"><span class="mark mark--initial" aria-hidden="true">O</span>Oqy</a>
+    <nav class="nav__links" aria-label="Главное">
+      <div class="nav__item"><a class="nav__link" href="#case">Кейс</a></div>
+      <div class="nav__item"><a class="nav__link" href="#how">Как работает</a></div>
+      <div class="nav__item"><a class="nav__link" href="#try">Попробовать</a></div>
+      <div class="nav__item"><a class="nav__link" href="#demo">Демо</a></div>
+    </nav>
+    <div class="nav__actions">
+      <a class="btn btn--primary" href="/demo">Открыть демо-класс</a>
+    </div>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Меню">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero hero--centred" data-enter aria-labelledby="hero-h">
+    <div class="wrap"><div class="hero-text">
+      <div class="hero__c">
+        <a class="pill" href="#how"><span>Работает в режиме самолёта</span><span class="muted">Как это устроено</span></a>
+        <h1 id="hero-h" aria-label="ИИ-тренажёр чтения для 7–9 классов">ИИ-тренажёр чтения для 7–9 классов</h1>
+        <p class="hero__lead">Двое из трёх 15-летних в Казахстане не находят нужное в тексте средней сложности. Oqy тренирует чтение по рамке PISA и работает без интернета.</p>
+        <div class="btn-row"><a class="btn btn--primary" href="/demo">Открыть демо-класс<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a><a class="btn btn--secondary" href="#try">Решить задание</a></div>
+      </div>
+      <div class="hero__window" data-fx="painterly-landscape" data-fx-seed="7" role="img" aria-label="Oqy даёт ученику подсказку к заданию про расписание автобуса, не раскрывая ответ">
+        <div class="ly-piece d-win d-win--dark" aria-hidden="true">
+          <div class="d-win__bar"><span class="d-win__dots"><i></i><i></i><i></i></span><span><b>8 «Б»</b> · Расписание автобуса</span><span class="sp"></span><span>Без сети · сохранено</span></div>
+          <div class="d-win__body">
+            <div class="inbox">
+              <div class="q">Ученики</div>
+              <div class="t is-on"><i style="background:#a1ffcb">3</i><b>Ученик № 3</b><time>2/5</time><span>Понять: делает выводы с подсказкой</span></div>
+              <div class="t"><i style="background:#f3e3b0">6</i><b>Ученик № 6</b><time>2/5</time><span>Оценить: уверенно ошибается</span></div>
+              <div class="t"><i style="background:#cde9dc">8</i><b>Ученик № 8</b><time>5/5</time><span>Найти: решает без подсказок</span></div>
+            </div>
+            <div class="convo">
+              <div class="d-chat" data-ly-steps="900">
+                <div class="d-msg d-msg--me">Я выбрал 06:40, это же раньше всего?<small>Ученик № 3</small></div>
+                <div class="d-tool" data-step>Сверяю ответ с расписанием на субботу</div>
+                <div class="d-msg d-msg--bot" data-step>Найди строку про субботу. Ходит ли в субботу автобус в 06:40? Какой субботний рейс приедет до 10:00?<small>Подсказка 2 из 3 · ответ не раскрыт</small></div>
+                <div class="acts" data-step><span>Ответить</span><span>Ещё подсказка</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <section class="section" id="case" aria-labelledby="case-h">
+    <div class="wrap">
+      <div class="grid grid--top fill">
+        <div class="span-6 stack-4">
+          <p class="t-label muted">Кейс 3 · Órleu Hack 2026</p>
+          <h2 id="case-h">Задача: двое из трёх подростков не понимают текст</h2>
+          <p class="t-lead">В PISA-2025 писали 22&nbsp;680 казахстанских 15-летних из 643 школ. Базового уровня достигли:</p>
+          <dl class="case-stats">
+            <div><dt>Чтение</dt><dd><b>36%</b><span class="case-bar"><i style="width:36%"></i></span></dd></div>
+            <div><dt>Математика</dt><dd><b>44%</b><span class="case-bar"><i style="width:44%"></i></span></dd></div>
+            <div><dt>Естествознание</dt><dd><b>52%</b><span class="case-bar"><i style="width:52%"></i></span></dd></div>
+            <div class="is-ref"><dt>ОЭСР, естествознание</dt><dd><b>74%</b><span class="case-bar"><i style="width:74%"></i></span></dd></div>
+          </dl>
+          <p>Сельские школы отстают от городских на 18 баллов по математике (PISA-2022), а интернет там слабый. Поэтому Oqy работает без сети.</p>
+        </div>
+        <figure class="frame frame--photo span-6 start-7" data-moment="liquid-hover" data-moment-opts='{"strength": 0.7}'>
+          <img class="frame__img" src="/home/assets/img/photo-f43777946-1280.jpg" srcset="/home/assets/img/photo-f43777946-500.jpg 500w, /home/assets/img/photo-f43777946-960.jpg 960w, /home/assets/img/photo-f43777946-1280.jpg 1280w" sizes="(max-width: 1023px) 100vw, 50vw" width="1280" height="853" alt="Пастух с отарой в степи Казахстана, вдали горы" loading="lazy" decoding="async" data-source="stand-in" data-subject="казахстанская степь">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="try" aria-labelledby="try-h">
+    <div class="wrap">
+      <div class="grid grid--top fill">
+        <div class="span-5 stack-4">
+          <h2 id="try-h">Задание Oqy: решите сами</h2>
+          <p class="t-lead">Так выглядит тренировка ученика. Ошибитесь нарочно: ИИ не скажет ответ, а задаст наводящий вопрос.</p>
+          <ol class="try-legend">
+            <li><b>Найти</b> нужный факт в тексте</li>
+            <li><b>Понять</b> и сделать вывод</li>
+            <li><b>Оценить</b> достоверность</li>
+          </ol>
+          <p class="muted">Это задание на навык «Найти». Подсказки лежат в телефоне, интернет не нужен.</p>
+        </div>
+        <div class="span-7 start-6">
+          <div class="trainer" data-trainer>
+            <div class="trainer__bar"><span>Найти · сложность 1</span><span class="trainer__net">Без сети</span></div>
+            <div class="trainer__doc">
+              <p class="trainer__doc-title">Автобус № 12: аул Жанаарка → райцентр</p>
+              <p>Будни: 06:40, 08:15, 12:30, 17:05.<br>Суббота: 08:15, 13:00.<br>Воскресенье: рейсов нет.<br>Время в пути: 1 час 10 минут.</p>
+            </div>
+            <p class="trainer__q" id="trainer-q">Асель в субботу хочет быть в райцентре до 10:00. Каким рейсом ей ехать?</p>
+            <div class="trainer__opts" role="group" aria-labelledby="trainer-q">
+              <button type="button" class="trainer__opt" data-opt="0">06:40</button>
+              <button type="button" class="trainer__opt" data-opt="1">08:15</button>
+              <button type="button" class="trainer__opt" data-opt="2">12:30</button>
+              <button type="button" class="trainer__opt" data-opt="3">13:00</button>
+            </div>
+            <div class="trainer__feedback" aria-live="polite" data-feedback></div>
+            <div class="trainer__skill"><span>Навык «Найти»</span><span class="trainer__meter"><i data-meter style="width:40%"></i></span><b data-level>2/5</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="how" style="--h: 2" data-moment="pinned-chapters" aria-labelledby="how-h">
+    <div class="wrap mo-pc__grid">
+      <div class="mo-pc__text">
+        <h2 id="how-h">Как работает Oqy: три шага</h2>
+        <ol class="mo-pc__steps">
+          <li class="mo-pc__step">
+            <h3>1. Ученик тренируется в телефоне</h3>
+            <p>Один раз скачивает приложение в школе. Дальше задания, проверка и подсказки работают в режиме самолёта.</p>
+            <figure class="mo-pc__visual"><img src="/home/assets/img/photo-f96095093-960.jpg" alt="Сельская школа в Казахстане: двухэтажное здание у дороги" width="960" height="636"></figure>
+          </li>
+          <li class="mo-pc__step">
+            <h3>2. Результат уходит учителю QR-кодом</h3>
+            <p>Ученик показывает QR на экране, учитель сканирует его камерой. Сеть не нужна ни тому, ни другому.</p>
+            <figure class="mo-pc__visual"><img class="shot shot--qr" src="/home/assets/img/ui-qr.png" alt="Экран Oqy с QR-кодом результатов ученика" width="1280" height="800"></figure>
+          </li>
+          <li class="mo-pc__step">
+            <h3>3. Учитель видит, кому что подтянуть</h3>
+            <p>Карта класса по трём навыкам, трудные задания и группы на завтра. Готовый план урока на 10 минут.</p>
+            <figure class="mo-pc__visual"><img class="shot shot--map" src="/home/assets/img/ui-map.png" alt="Карта класса в Oqy: ученики по навыкам найти, понять, оценить" width="1280" height="1394"></figure>
+          </li>
+        </ol>
+      </div>
+      <div class="mo-pc__visuals frame"></div>
+    </div>
+  </section>
+
+  <section class="section" id="answer" aria-labelledby="answer-h">
+    <div class="wrap">
+      <div class="section-head"><h2 id="answer-h">Ответ на задачу кейса, по пунктам</h2></div>
+      <ul class="fit-rows">
+        <li><span class="fit-rows__ask">С помощью ИИ</span><span class="fit-rows__do">ИИ даёт подсказки по ошибке ученика, не раскрывая ответ, и делает задания PISA из фото страницы учебника.</span></li>
+        <li><span class="fit-rows__ask">Поднять функциональную грамотность</span><span class="fit-rows__do">Задания на три навыка чтения из рамки PISA: найти, понять, оценить. Тексты из жизни: расписание, инструкция, рассылка.</span></li>
+        <li><span class="fit-rows__ask">Ученикам 7–9 классов</span><span class="fit-rows__do">Сложность подстраивается под уровень ученика. Перед ответом он отмечает уверенность, и учитель видит, кто ошибается уверенно.</span></li>
+        <li><span class="fit-rows__ask">В сельской школе со слабым интернетом</span><span class="fit-rows__do">Всё работает офлайн. Результаты передаются QR-кодом, отчёты печатаются, копия класса переносится файлом.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section g2" id="teacher" aria-labelledby="teacher-h">
+    <div class="wrap">
+      <div class="group">
+        <div class="section-head">
+          <h2 id="teacher-h">Инструменты учителя. <span class="muted">Урок, разбор и отчёты из одних данных.</span></h2>
+        </div>
+        <div class="grid">
+          <article class="card card--row card--open span-6">
+            <h3>Урок на доске</h3>
+            <p>Задание на проекторе, голоса по поднятым рукам, подсказки по одной, ответ последним.</p>
+            <div class="panel"><img class="shot" src="/home/assets/img/ui-lesson.png" alt="Режим урока на доске: задание про расписание автобуса и голоса класса" loading="lazy" width="1280" height="1188" style="object-position: 30% 22%"></div>
+          </article>
+          <article class="card card--row card--open span-6">
+            <h3>Трудные задания</h3>
+            <p>Где ошибается больше половины класса или ошибаются уверенно.</p>
+            <div class="panel"><img class="shot" src="/home/assets/img/ui-tasks.png" alt="Разбор заданий: доля верных ответов, подсказок и уверенных ошибок" loading="lazy" width="1280" height="1621" style="object-position: 60% 14%"></div>
+          </article>
+        </div>
+      </div>
+      <div class="grid">
+        <article class="card card--row card--open span-6">
+          <h3>Группы на завтра</h3>
+          <p>Группы по слабому навыку: три задания и совет на 10 минут.</p>
+          <div class="panel"><img class="shot" src="/home/assets/img/ui-tomorrow.png" alt="Группы учеников по слабому навыку с заданиями" loading="lazy" width="1280" height="866" style="object-position: 60% 30%"></div>
+        </article>
+        <article class="card card--row card--open span-6">
+          <h3>Карта класса</h3>
+          <p>Каждый ученик по трём навыкам, уровни от 1 до 5, отметка уверенных ошибок.</p>
+          <div class="panel"><img class="shot" src="/home/assets/img/ui-map.png" alt="Карта класса: таблица учеников и уровней навыков" loading="lazy" width="1280" height="1394" style="object-position: 70% 30%"></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="demo" aria-labelledby="demo-h">
+    <div class="wrap">
+      <div class="section-head"><h2 id="demo-h">Демо-класс: что смотреть за 3 минуты</h2><p>Двенадцать учеников с результатами за несколько недель. Регистрация не нужна, данные остаются в вашем браузере.</p></div>
+      <ol class="demo-steps">
+        <li><a href="/demo"><b>Карта класса</b><span>Кто силён и кто отстаёт по каждому навыку</span></a></li>
+        <li><a href="/demo?tab=tasks"><b>Трудные задания</b><span>Что разобрать с классом на следующем уроке</span></a></li>
+        <li><a href="/demo?tab=lesson"><b>Урок на доске</b><span>Подсказки по клавише П, ответ по клавише О</span></a></li>
+        <li><a href="/demo?tab=reports"><b>Отчёты для собрания</b><span>Страница на ученика с советом родителям</span></a></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="faq" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="section-head"><h2 id="faq-h">Вопросы, которые нам задают</h2></div>
+      <div class="faq">
+        <div class="faq__item"><h3>Чем это лучше ChatGPT?</h3><p>ChatGPT выдаёт готовый ответ и требует интернет. Oqy ответ не раскрывает, работает без сети и показывает учителю навыки класса.</p></div>
+        <div class="faq__item"><h3>Что будет, если ИИ ошибётся?</h3><p>Базовые задания вычитаны людьми. Задания из фото учитель проверяет и правит до раздачи.</p></div>
+        <div class="faq__item"><h3>Где хранятся данные детей?</h3><p>На устройстве учителя. Имён нет: у ученика только код класса и номер. В ИИ уходит только текст ответа.</p></div>
+        <div class="faq__item"><h3>Сколько это стоит школе?</h3><p>Для учеников бесплатно. Школы и акиматы платят за аналитику по классам и отчёты.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer closing" id="contact" aria-labelledby="close-h">
+  <div class="wrap">
+    <div class="closing__cta close--type">
+      <div class="section-head">
+        <h2 id="close-h">Откройте демо-класс за один клик</h2>
+        <p>Двенадцать учеников с результатами, все экраны учителя. Без регистрации.</p>
+      </div>
+      <a class="btn btn--primary btn--xl btn--wide" href="/demo">Открыть демо-класс<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+    </div>
+    <div class="closing__links">
+      <div class="grid">
+        <div class="span-4 stack-4">
+          <a class="nav__logo" href="#top"><span class="mark mark--initial" aria-hidden="true">O</span>Oqy</a>
+          <p class="footer__lede">Тренажёр функциональной грамотности для 7–9 классов. Órleu Hack 2026, кейс «Читать и понимать».</p>
+        </div>
+        <div class="span-2 footer__col"><h3>Продукт</h3><ul><li><a href="#how">Как работает</a></li><li><a href="#teacher">Учителю</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Приложение</h3><ul><li><a href="/teacher">Панель учителя</a></li><li><a href="/student">Ученику</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Демо</h3><ul><li><a href="/demo">Демо-класс</a></li><li><a href="/demo/qr">Тестовый ученик</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Проект</h3><ul><li><a href="https://github.com/donikamin/orleu-hack-2026">Код на GitHub</a></li><li><a href="#faq">Вопросы</a></li></ul></div>
+      </div>
+      <div class="footer__legal">
+        <span>&copy; 2026 Oqy</span>
+        <a class="credits" href="/home/credits.html">Фото: Wikimedia Commons</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="/home/assets/system.js"></script>
+<script type="module" src="/home/assets/motion/motion.js"></script>
+<script type="module" src="/home/assets/layout/layout.js"></script>
+<script>
+// Живое задание на лендинге: лестница подсказок, ответ не раскрывается, пока ученик не найдёт его сам.
+(() => {
+  const root = document.querySelector('[data-trainer]');
+  if (!root) return;
+  const correct = 1;
+  const hints = {
+    0: ['Рейс 06:40 есть в строке «Будни». Ходит ли он в субботу?', 'Найдите строку «Суббота». Какие там рейсы?', 'В субботу два рейса. Прибавьте 1 час 10 минут к каждому: какой успевает до 10:00?'],
+    2: ['12:30 есть только в будни. Посмотрите строку про субботу.', 'В субботу рейсы 08:15 и 13:00. Какой приедет раньше 10:00?', 'Прибавьте 1 час 10 минут к 08:15.'],
+    3: ['13:00 действительно ходит в субботу. Но во сколько он приедет?', 'Прибавьте 1 час 10 минут к 13:00. Это раньше 10:00?', 'Есть субботний рейс раньше. Найдите его в строке «Суббота».'],
+  };
+  const fb = root.querySelector('[data-feedback]');
+  const meter = root.querySelector('[data-meter]');
+  const lvl = root.querySelector('[data-level]');
+  let used = 0;
+  const say = (cls, html) => { fb.innerHTML = `<p class="${cls}">${html}</p>`; };
+  root.querySelectorAll('[data-opt]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const i = Number(btn.dataset.opt);
+      if (i === correct) {
+        btn.classList.add('is-right');
+        root.querySelectorAll('[data-opt]').forEach((b) => (b.disabled = true));
+        const grow = used === 0 ? 72 : used === 1 ? 60 : 52;
+        meter.style.width = grow + '%';
+        lvl.textContent = used === 0 ? '4/5' : '3/5';
+        say('trainer__done', `<b>Верно.</b> Рейс 08:15 приезжает в 09:25. ${used ? `Вы нашли ответ сами, с ${used} подсказк${used === 1 ? 'ой' : 'ами'}: так навык растёт, а не списывается.` : 'Без подсказок: навык растёт сильнее.'}`);
+        return;
+      }
+      btn.classList.add('is-wrong');
+      btn.disabled = true;
+      const h = hints[i][Math.min(used, 2)];
+      used += 1;
+      say('trainer__hint', `<b>Подсказка ${used} из 3.</b> ${h}`);
+    });
+  });
+})();
+</script>
+</body>
+</html>

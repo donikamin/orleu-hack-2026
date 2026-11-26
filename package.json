@@ -1,0 +1,26 @@
+{
+  "name": "oqy-api",
+  "private": true,
+  "version": "0.1.0",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "dev": "tsx scripts/dev-api.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "bot:setup": "tsx scripts/set-webhook.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.14.0",
+    "@google/genai": "^3.6.1",
+    "@supabase/supabase-js": "^2.119.2",
+    "grammy": "^1.48.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.4",
+    "tsx": "^4.23.15",
+    "typescript": "5.9",
+    "vitest": "^5.1.2"
+  }
+}

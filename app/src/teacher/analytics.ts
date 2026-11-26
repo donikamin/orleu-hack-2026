@@ -89,3 +89,97 @@ export function tomorrowGroups(students: StudentSummary[], attempts: AttemptRow[
 export function formatDate(tsSeconds: number) {
   return new Date(tsSeconds * 1000).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 }
+
+// ---------- Разбор заданий: что трудно всему классу ----------
+export interface TaskStat {
+  task: Task | undefined;
+  taskId: string;
+  tries: number;
+  students: number;
+  correctRate: number; // доля полностью верных
+  hintRate: number; // среднее число подсказок
+  confidentWrongRate: number;
+  verdict: 'hard' | 'guess' | 'ok' | 'easy';
+}
+
+export function taskStats(attempts: AttemptRow[], lookup: TaskLookup): TaskStat[] {
+  const by = new Map<string, AttemptRow[]>();
+  for (const a of attempts) by.set(a.taskId, [...(by.get(a.taskId) ?? []), a]);
+  return [...by.entries()]
+    .map(([taskId, list]) => {
+      const tries = list.length;
+      const correctRate = list.filter((a) => a.score === 1).length / tries;
+      const hintRate = list.reduce((s, a) => s + a.hintsUsed, 0) / tries;
+      const withConf = list.filter((a) => a.confidence);
+      const confidentWrongRate = withConf.length ? withConf.filter((a) => a.confidence === 3 && a.score === 0).length / withConf.length : 0;
+      const verdict: TaskStat['verdict'] =
+        confidentWrongRate >= 0.25 ? 'guess' : correctRate < 0.45 ? 'hard' : correctRate > 0.85 && hintRate < 0.5 ? 'easy' : 'ok';
+      return { taskId, task: lookup.get(taskId), tries, students: new Set(list.map((a) => a.number)).size, correctRate, hintRate, confidentWrongRate, verdict };
+    })
+    .sort((a, b) => a.correctRate - b.correctRate);
+}
+
+// ---------- Динамика по неделям ----------
+export interface WeekPoint {
+  week: number; // начало недели, unix-секунды (понедельник)
+  label: string;
+  values: Record<Skill, number | null>; // доля верных за неделю, 0…1
+  tries: number;
+}
+
+const WEEK = 7 * 86400;
+function weekStart(ts: number) {
+  const d = new Date(ts * 1000);
+  const day = (d.getDay() + 6) % 7; // пн = 0
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - day);
+  return Math.floor(d.getTime() / 1000);
+}
+
+export function weeklyTrend(attempts: AttemptRow[], lookup: TaskLookup, maxWeeks = 8): WeekPoint[] {
+  if (!attempts.length) return [];
+  const last = weekStart(Math.max(...attempts.map((a) => a.ts)));
+  const first = Math.max(weekStart(Math.min(...attempts.map((a) => a.ts))), last - (maxWeeks - 1) * WEEK);
+  const points: WeekPoint[] = [];
+  for (let w = first; w <= last; w += WEEK) {
+    const inWeek = attempts.filter((a) => a.ts >= w && a.ts < w + WEEK);
+    const values = Object.fromEntries(
+      SKILLS.map((s) => {
+        const list = inWeek.filter((a) => lookup.get(a.taskId)?.skill === s);
+        return [s, list.length ? list.reduce((sum, a) => sum + a.score, 0) / list.length : null];
+      }),
+    ) as Record<Skill, number | null>;
+    points.push({ week: w, label: new Date(w * 1000).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }), values, tries: inWeek.length });
+  }
+  return points;
+}
+
+// ---------- Отчёт ученика: сильное, слабое, что делать дома ----------
+export const HOME_ADVICE: Record<Skill, string> = {
+  locate: 'Дома: дайте ребёнку расписание, чек или инструкцию и спросите один конкретный факт («во сколько?», «сколько стоит?»). Пусть покажет пальцем, где это написано.',
+  understand: 'Дома: после новости или рассказа спросите «Что из этого следует?» и «Почему ты так думаешь?». Важна причина, а не пересказ.',
+  evaluate: 'Дома: разберите вместе рассылку из WhatsApp. Кто автор? Чем он докажет? Где эмоции вместо фактов? Хорошая привычка — проверять источник.',
+};
+
+export function strongest(s: StudentSummary) {
+  const withData = s.skills.filter((x) => x.attempts > 0);
+  return withData.length ? withData.reduce((a, b) => (b.rating > a.rating ? b : a)) : null;
+}
+
+// ---------- Экспорт в Excel (CSV с BOM и «;», как ждёт русский Excel) ----------
+export function toCsv(rows: (string | number)[][]) {
+  const esc = (v: string | number) => {
+    const s = String(v);
+    return /[;"\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  return '﻿' + rows.map((r) => r.map(esc).join(';')).join('\r\n');
+}
+
+export function download(filename: string, content: string, type = 'text/csv;charset=utf-8') {
+  const url = URL.createObjectURL(new Blob([content], { type }));
+  const a = Object.assign(document.createElement('a'), { href: url, download: filename });
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}

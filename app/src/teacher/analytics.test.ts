@@ -18,9 +18,9 @@ const row = (number: number, taskId: string, score: 0 | 0.5 | 1, confidence?: 1 
 });
 
 describe('pack', () => {
-  it('9 стартовых заданий, по 3 на навык, все с 3 подсказками', () => {
-    expect(PACK).toHaveLength(9);
-    for (const s of ['locate', 'understand', 'evaluate']) expect(PACK.filter((t) => t.skill === s)).toHaveLength(3);
+  it('45 заданий по-русски (15 на навык) и 9 по-казахски, все с 3 подсказками', () => {
+    expect(PACK).toHaveLength(54);
+    for (const s of ['locate', 'understand', 'evaluate']) expect(PACK.filter((t) => t.skill === s && t.lang === 'ru')).toHaveLength(15);
     for (const t of PACK) expect(t.hints).toHaveLength(3);
   });
   it('taskRef: число → id из пакета, строка → как есть', () => {
@@ -58,5 +58,42 @@ describe('analytics', () => {
     const evaluate = g.find((x) => x.skill === 'evaluate');
     expect(evaluate?.students).toContain(1);
     expect(evaluate?.tasks.length).toBeGreaterThan(0);
+  });
+});
+
+import { taskStats, toCsv, weeklyTrend } from './analytics';
+
+describe('новая аналитика', () => {
+  const week = 7 * 86400;
+  const base = 1_800_000_000;
+  const list = [
+    row(1, 'c-eva-01', 0, 3, base),
+    row(2, 'c-eva-01', 0, 3, base + 10),
+    row(3, 'c-eva-01', 1, 2, base + 20),
+    row(1, 'c-loc-01', 1, 3, base + week),
+    row(2, 'c-loc-01', 1, 2, base + week + 5),
+  ];
+
+  it('разбор заданий: уверенные ошибки помечаются как ложное представление и идут первыми', () => {
+    const s = taskStats(list, lookup);
+    expect(s[0].taskId).toBe('c-eva-01');
+    expect(s[0].verdict).toBe('guess');
+    expect(s[0].correctRate).toBeCloseTo(1 / 3);
+    expect(s.find((x) => x.taskId === 'c-loc-01')!.verdict).toBe('easy');
+  });
+
+  it('динамика: точки по неделям, пустой навык — null', () => {
+    const p = weeklyTrend(list, lookup);
+    expect(p.length).toBeGreaterThanOrEqual(2);
+    expect(p[0].values.evaluate).toBeCloseTo(1 / 3);
+    expect(p[p.length - 1].values.locate).toBe(1);
+    expect(p[0].values.understand).toBeNull();
+  });
+
+  it('CSV для русского Excel: BOM, «;», экранирование', () => {
+    const csv = toCsv([['a;b', 'he said "hi"'], [1, 2]]);
+    expect(csv.charCodeAt(0)).toBe(0xfeff);
+    expect(csv).toContain('"a;b";"he said ""hi"""');
+    expect(csv).toContain('\r\n1;2');
   });
 });

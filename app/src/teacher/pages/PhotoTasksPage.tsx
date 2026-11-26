@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { Skill, Task } from '@shared/types';
 import { SKILLS, SKILL_LABEL } from '@shared/types';
 import { db } from '../db';
-import { ApiUnavailable, imageFileToBase64, photoToTasks } from '../api';
+import { ApiUnavailable, imageFileToBase64, photoToTasks, publishTasks } from '../api';
 import { useClass, useOnline } from '../hooks';
 import { Badge, Button, ButtonLink, Card, Field, inputClass, Notice } from '../../ui';
 import { sampleTasksFromPhoto } from '../sample';
@@ -19,6 +19,7 @@ export default function PhotoTasksPage() {
   const [keep, setKeep] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [isSample, setIsSample] = useState(false);
+  const [publish, setPublish] = useState<{ tone: 'brand' | 'danger'; text: string } | null>(null);
 
   async function onFile(file: File) {
     setError(null);
@@ -56,6 +57,18 @@ export default function PhotoTasksPage() {
   async function save() {
     const chosen = tasks.filter((t) => keep.has(t.id));
     await db.tasks.bulkPut(chosen.map((t) => ({ ...t, classCode: cls.code, createdAt: Date.now() })));
+    // Класс есть на сервере → отдаём задания ученикам (они придут в /api/pack?class=КОД).
+    // Демо-пример не отправляем. Без сервера задания всё равно остаются у учителя: QR и печать работают.
+    if (cls.synced && !isSample) {
+      try {
+        const r = await publishTasks(cls.code, cls.teacherKey, chosen);
+        setPublish({ tone: 'brand', text: `Задания отправлены ученикам: ${r.saved}. Они появятся у них при следующем подключении к интернету.` });
+      } catch (e) {
+        setPublish({ tone: 'danger', text: `${e instanceof ApiUnavailable ? e.message : 'Не удалось отправить'}. Задания сохранены на этом устройстве, раздайте их QR-кодом или на печать.` });
+      }
+    } else {
+      setPublish(null);
+    }
     setStage('saved');
   }
 
@@ -64,6 +77,11 @@ export default function PhotoTasksPage() {
       <Card className="max-w-xl">
         <h2 className="text-lg font-bold">Задания сохранены в класс</h2>
         <p className="mt-2 text-muted">Теперь их можно выдать ученикам через QR-код или распечатать.</p>
+        {publish && (
+          <div className="mt-3">
+            <Notice tone={publish.tone}>{publish.text}</Notice>
+          </div>
+        )}
         <div className="mt-4 flex flex-wrap gap-2">
           <ButtonLink to={`/teacher/${cls.code}/assign`}>Выдать задание</ButtonLink>
           <Button
@@ -117,7 +135,7 @@ export default function PhotoTasksPage() {
               onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
             />
           </Field>
-          {image && <img src={image.dataUrl} alt="Выбранная страница" className="max-h-80 rounded-xl border border-line object-contain" />}
+          {image && <img src={image.dataUrl} alt="Выбранная страница" width={1600} height={1200} className="h-auto max-h-80 w-auto rounded-xl border border-line object-contain" />}
           {image && <p className="text-xs text-muted">После сжатия: {image.kb} КБ (экономим трафик)</p>}
           <Field label="Язык заданий">
             <select className={inputClass} value={lang} onChange={(e) => setLang(e.target.value as 'ru' | 'kk')}>

@@ -39,10 +39,10 @@ export default function DemoStudentQr() {
       <div className="grid gap-6 md:grid-cols-[320px_1fr]">
         <Card className="space-y-4">
           <Field label="Код класса">
-            <input className={`${inputClass} font-mono uppercase`} value={classCode} onChange={(e) => setClassCode(e.target.value)} />
+            <input name="classCode" autoComplete="off" spellCheck={false} className={`${inputClass} font-mono uppercase`} value={classCode} onChange={(e) => setClassCode(e.target.value)} />
           </Field>
           <Field label="Номер ученика">
-            <input className={inputClass} type="number" min={1} max={40} value={number} onChange={(e) => setNumber(Math.max(1, Number(e.target.value) || 1))} />
+            <input name="number" inputMode="numeric" autoComplete="off" className={inputClass} type="number" min={1} max={40} value={number} onChange={(e) => setNumber(Math.max(1, Number(e.target.value) || 1))} />
           </Field>
           <Button variant="secondary" onClick={() => setSeed((s) => s + 1)}>
             Другие результаты
@@ -50,7 +50,7 @@ export default function DemoStudentQr() {
           <p className="text-sm text-muted">Откройте сканер на другом устройстве (или загрузите скриншот QR в сканер).</p>
         </Card>
         <Card className="text-center">
-          {images[idx] && <img src={images[idx]} alt={`QR-код, часть ${idx + 1} из ${parts.length}`} className="mx-auto w-full max-w-sm" />}
+          {images[idx] && <img src={images[idx]} alt={`QR-код, часть ${idx + 1} из ${parts.length}`} width={520} height={520} className="mx-auto h-auto w-full max-w-sm" />}
           <p className="mt-3 flex items-center justify-center gap-2">
             <Badge tone="brand">
               часть {idx + 1} из {parts.length}

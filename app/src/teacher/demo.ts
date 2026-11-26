@@ -44,16 +44,26 @@ export function demoAttemptsFor(number: number, seed = number * 97): Attempt[] {
       const ok = rand() < chance + hintsUsed * 0.08;
       const score = (ok ? 1 : rand() < 0.2 ? 0.5 : 0) as 0 | 0.5 | 1;
       // часть учеников уверенно ошибается на «Оценить» — ложные представления
-      const confidence = (!ok && p.evaluate < 0.4 && t.skill === 'evaluate' ? 3 : ok ? (rand() < 0.6 ? 3 : 2) : rand() < 0.3 ? 3 : 1) as 1 | 2 | 3;
+      const confidence = (!ok && p.evaluate < 0.4 && t.skill === 'evaluate' && rand() < 0.7 ? 3 : ok ? (rand() < 0.6 ? 3 : 2) : rand() < 0.5 ? 2 : 1) as 1 | 2 | 3;
       out.push({ taskId: t.id, score, hintsUsed, confidence, ts: now - (rounds - r) * 2 * 86400 - (PACK.length - i) * 300 - number * 7 });
     });
   }
   return out;
 }
 
-export async function seedDemoClass(): Promise<string> {
+let seeding: Promise<string> | null = null;
+
+/** Пересоздать демо-класс. Повторный вызов во время работы ждёт тот же процесс (без дублей). */
+export function seedDemoClass(): Promise<string> {
+  seeding ??= doSeed().finally(() => {
+    seeding = null;
+  });
+  return seeding;
+}
+
+async function doSeed(): Promise<string> {
   await db.transaction('rw', db.classes, db.attempts, async () => {
-    await db.classes.put({ code: DEMO_CODE, name: 'Демо: 8 «Б», чтение', grade: 8, size: 14, teacherKey: 'DEMO-KEY', createdAt: Date.now(), synced: false });
+    await db.classes.put({ code: DEMO_CODE, name: 'Пример класса: 8 «Б»', grade: 8, size: 14, teacherKey: 'DEMO-KEY', createdAt: Date.now(), synced: false });
     await db.attempts.where('classCode').equals(DEMO_CODE).delete();
   });
   for (let n = 1; n <= 12; n++) await saveAttempts(DEMO_CODE, n, demoAttemptsFor(n), 'qr');

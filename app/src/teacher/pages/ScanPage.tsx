@@ -163,7 +163,7 @@ export default function ScanPage() {
               />
             </Field>
             <Field label="Текст кода" hint="Если ученик скопировал код (начинается с OQ1|). Можно несколько через пробел.">
-              <textarea className={`${inputClass} min-h-24 font-mono text-xs`} value={manual} onChange={(e) => setManual(e.target.value)} />
+              <textarea name="qrText" autoComplete="off" spellCheck={false} placeholder="OQ1|DEMO|13|1/1|…" className={`${inputClass} min-h-24 font-mono text-xs`} value={manual} onChange={(e) => setManual(e.target.value)} />
             </Field>
             <Button variant="secondary" onClick={submitManual} disabled={!manual.trim()}>
               Загрузить текст
