@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Link, NavLink, Outlet, Route, Routes } from 'react-router';
+import { Link, Navigate, NavLink, Outlet, Route, Routes } from 'react-router';
 import { useOnline } from './teacher/hooks';
 import StudentPlaceholder from './student/StudentPlaceholder';
 import { ThemeToggle } from './ui/ThemeToggle';
@@ -8,8 +8,13 @@ import SiteHome from './site/SiteHome';
 
 // Экраны лендинга-приложения: каждый — отдельный экран без длинной прокрутки
 const SiteCase = lazy(() => import('./site/SiteCase'));
-const SiteTry = lazy(() => import('./site/SiteTry'));
-const SiteHow = lazy(() => import('./site/SiteHow'));
+const SiteTrain = lazy(() => import('./site/SiteTrain'));
+const SiteTask = lazy(() => import('./site/SiteTask'));
+const SiteTexts = lazy(() => import('./site/SiteTexts'));
+const SiteOffline = lazy(() => import('./site/SiteOffline'));
+const SiteLessons = lazy(() => import('./site/SiteLessons'));
+const SiteMe = lazy(() => import('./site/SiteMe'));
+const SiteTutor = lazy(() => import('./site/SiteTutor'));
 const SiteTools = lazy(() => import('./site/SiteTools'));
 
 // Экраны учителя грузятся отдельными кусками и кэшируются PWA для офлайна.
@@ -81,8 +86,18 @@ export default function App() {
       <Route element={<SiteShell />}>
         <Route index element={<SiteHome />} />
         <Route path="case" element={<SiteCase />} />
-        <Route path="try" element={<SiteTry />} />
-        <Route path="how" element={<SiteHow />} />
+        <Route path="train" element={<SiteTrain />} />
+        <Route path="train/:id" element={<SiteTask />} />
+        <Route path="texts" element={<SiteTexts />} />
+        <Route path="texts/:id" element={<SiteTexts />} />
+        <Route path="offline" element={<SiteOffline />} />
+        <Route path="lessons" element={<SiteLessons />} />
+        <Route path="lessons/:id" element={<SiteLessons />} />
+        <Route path="me" element={<SiteMe />} />
+        <Route path="tutor" element={<SiteTutor />} />
+        <Route path="math" element={<SiteTrain />} />
+        <Route path="try" element={<Navigate to="/train" replace />} />
+        <Route path="how" element={<Navigate to="/offline" replace />} />
         <Route path="tools" element={<SiteTools />} />
       </Route>
       <Route element={<AppLayout />}>

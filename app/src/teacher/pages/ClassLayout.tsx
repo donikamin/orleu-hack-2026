@@ -93,7 +93,7 @@ export default function ClassLayout() {
             </span>
             <span aria-hidden>·</span>
             <span>{ctx.attempts.length} попыток</span>
-            {cls.code === 'DEMO' && <Badge tone="accent">демо-данные</Badge>}
+            {cls.code === 'DEMO' && <Badge tone="accent">вымышленные ученики</Badge>}
           </p>
         </div>
         <Button variant="secondary" onClick={pull} disabled={syncing}>
