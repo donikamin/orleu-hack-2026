@@ -10,3 +10,9 @@ Thumbs.db
 .vscode/
 .idea/
 .claude/settings.local.json
+
+# Р»РѕРєР°Р»СЊРЅС‹Рµ РЅР°СЃС‚СЂРѕР№РєРё
+app/.claude/
+
+# служебные файлы taste-skill (история раздач, профили Chrome)
+.taste-skill/

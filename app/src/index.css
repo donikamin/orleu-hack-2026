@@ -1,0 +1,238 @@
+@import 'tailwindcss';
+
+/*
+  Дизайн-система Oqy (часть C).
+  Палитра: ui-ux-pro-max, профиль № 179 «LMS / образование» — бирюзовый прогресс + янтарный акцент.
+  Шрифты: Golos Text (интерфейс; кириллица и казахские буквы, cyrillic-ext) + Literata (тексты заданий).
+  Правила: контраст текста ≥ 4.5:1 в обеих темах, цели касания ≥ 44px, без фиолетового.
+*/
+@theme {
+  --font-sans: 'Golos Text', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Literata', Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --color-paper: #f6f8f7;
+  --color-surface: #ffffff;
+  --color-raised: #eef3f1;
+  --color-ink: #10201e;
+  --color-muted: #4b5a58;
+  --color-line: #dce5e2;
+
+  --color-brand: #0f766e;
+  --color-brand-strong: #115e59;
+  --color-brand-soft: #dff5f0;
+  --color-on-brand: #ffffff;
+  --color-accent: #b45309;
+  --color-accent-soft: #fdf1df;
+  --color-danger: #b42318;
+  --color-danger-soft: #fdeceb;
+  --color-mint: #a1ffcb;
+
+  /* Уровни навыка 1…5: одна последовательная гамма (тёплый → бирюзовый); в ячейке всегда цифра */
+  --color-lv1: #fbe3df;
+  --color-lv2: #fcecd3;
+  --color-lv3: #eef1dc;
+  --color-lv4: #c9ebde;
+  --color-lv5: #8fd9c0;
+
+  --radius-card: 16px;
+  --shadow-card: 0 1px 2px rgb(16 32 30 / 0.04), 0 8px 24px -12px rgb(16 32 30 / 0.12);
+}
+
+/* Тёмная тема: по системной настройке или по переключателю (data-theme на <html>) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-paper: #0c1413;
+    --color-surface: #131e1c;
+    --color-raised: #1a2725;
+    --color-ink: #e6efec;
+    --color-muted: #9fb1ad;
+    --color-line: #263533;
+    --color-brand: #2dd4bf;
+    --color-brand-strong: #5eead4;
+    --color-brand-soft: #123a35;
+    --color-on-brand: #062320;
+    --color-accent: #fbbf24;
+    --color-accent-soft: #3a2a10;
+    --color-danger: #f97066;
+    --color-danger-soft: #3d1715;
+    --color-lv1: #4a2420;
+    --color-lv2: #4a3518;
+    --color-lv3: #36391f;
+    --color-lv4: #1d4a3e;
+    --color-lv5: #1f6b58;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --color-paper: #0c1413;
+  --color-surface: #131e1c;
+  --color-raised: #1a2725;
+  --color-ink: #e6efec;
+  --color-muted: #9fb1ad;
+  --color-line: #263533;
+  --color-brand: #2dd4bf;
+  --color-brand-strong: #5eead4;
+  --color-brand-soft: #123a35;
+  --color-on-brand: #062320;
+  --color-accent: #fbbf24;
+  --color-accent-soft: #3a2a10;
+  --color-danger: #f97066;
+  --color-danger-soft: #3d1715;
+  --color-lv1: #4a2420;
+  --color-lv2: #4a3518;
+  --color-lv3: #36391f;
+  --color-lv4: #1d4a3e;
+  --color-lv5: #1f6b58;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    color-scheme: light;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  select {
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+  }
+  kbd {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    border: 1px solid currentColor;
+    border-radius: 6px;
+    padding: 0 0.35em;
+    opacity: 0.7;
+  }
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    font-size: 16px;
+    line-height: 1.55;
+    font-variant-numeric: tabular-nums;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+    letter-spacing: -0.015em;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  /* Фокус не прячется под липкой шапкой (WCAG 2.4.11) */
+  html {
+    scroll-padding-top: 80px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Текст для чтения в заданиях (часть A): засечки, 18px, свободная строка. className="text-read" */
+@utility text-read {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  line-height: 1.7;
+}
+
+/* Спокойное появление контента экрана (один раз, без анимации при прокрутке) */
+@keyframes oqy-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@utility animate-rise {
+  animation: oqy-rise 0.32s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  :root {
+    --color-paper: #fff;
+    --color-surface: #fff;
+    --color-ink: #000;
+  }
+  .print-page {
+    break-after: page;
+  }
+}
+
+/* ================= ЛЕНДИНГ-ПРИЛОЖЕНИЕ (src/site) =================
+   Образцы: adidas.com (чёрно-белый, 0 радиус, сжатый гротеск заглавными, крупные фото)
+   и apple.com/education (одна мысль на экран, крупный текст). Акцент — мята Oqy. */
+.site {
+  --s-bg: #ffffff; --s-ink: #0a0a0a; --s-muted: #5c5c5c; --s-line: #e6e6e6; --s-soft: #f4f4f2; --s-mint: #a1ffcb;
+  display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100dvh; background: var(--s-bg); color: var(--s-ink);
+  font-family: var(--font-sans);
+}
+:root[data-theme='dark'] .site { --s-bg: #0a0a0a; --s-ink: #f5f5f3; --s-muted: #a3a3a3; --s-line: #262626; --s-soft: #161616; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .site { --s-bg: #0a0a0a; --s-ink: #f5f5f3; --s-muted: #a3a3a3; --s-line: #262626; --s-soft: #161616; } }
+.display { font-family: 'Oswald', var(--font-sans); font-weight: 600; text-transform: uppercase; letter-spacing: -0.01em; line-height: 0.92; }
+.site-rail { position: sticky; top: 0; height: 100dvh; display: flex; flex-direction: column; gap: 28px; padding: 28px 20px; border-right: 1px solid var(--s-line); background: var(--s-bg); z-index: 30; }
+.site-logo { display: flex; align-items: center; gap: 10px; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: 0.04em; color: var(--s-ink); min-height: 44px; }
+.site-logo__mark { display: grid; place-items: center; width: 36px; height: 36px; background: var(--s-ink); color: var(--s-bg); font-size: 20px; }
+.site-nav { display: flex; flex-direction: column; gap: 2px; }
+.site-nav__item { position: relative; display: grid; grid-template-columns: 26px 22px 1fr; align-items: center; gap: 10px; min-height: 48px; padding: 0 12px; color: var(--s-muted); font-weight: 600; transition: color .15s, background-color .15s; }
+.site-nav__item:hover { color: var(--s-ink); background: var(--s-soft); }
+.site-nav__item.active { color: var(--s-ink); background: var(--s-soft); }
+.site-nav__item.active::before { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; background: var(--s-ink); }
+.site-nav__num { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: .05em; }
+.site-nav__short { display: none; }
+.site-rail__foot { margin-top: auto; display: grid; gap: 8px; justify-items: stretch; }
+.site-rail__foot > button { justify-self: start; }
+.site-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 24px; font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 17px; letter-spacing: .06em; text-transform: uppercase; border: 1.5px solid var(--s-ink); transition: transform .15s, background-color .15s, color .15s; }
+.site-btn:hover { transform: translateY(-2px); }
+.site-btn:active { transform: translateY(0); }
+.site-btn--solid { background: var(--s-ink); color: var(--s-bg); }
+.site-btn--solid:hover { background: transparent; color: var(--s-ink); }
+.site-btn--accent { background: var(--s-mint); color: #0a0a0a; border-color: var(--s-mint); }
+.site-btn--ghost { background: transparent; color: var(--s-ink); }
+.site-btn--ghost:hover { background: var(--s-ink); color: var(--s-bg); }
+.site-btn--light { background: #fff; color: #0a0a0a; border-color: #fff; }
+.site-main { min-width: 0; outline: none; }
+.site-screen { position: relative; min-height: 100dvh; display: flex; flex-direction: column; padding: 40px clamp(20px, 4vw, 64px) 32px; }
+.site-screen-enter { animation: site-in .45s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes site-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.site-kicker { font-family: 'Oswald', sans-serif; font-size: 14px; letter-spacing: .14em; text-transform: uppercase; color: var(--s-muted); }
+.site-next { margin-top: auto; align-self: flex-end; display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding-top: 24px; font-family: 'Oswald', sans-serif; font-size: 18px; letter-spacing: .06em; text-transform: uppercase; color: var(--s-ink); background-image: linear-gradient(currentColor, currentColor); background-size: 0 2px; background-position: 0 100%; background-repeat: no-repeat; transition: background-size .3s; }
+.site-next:hover { background-size: 100% 2px; }
+.site-photo { overflow: hidden; background: var(--s-soft); }
+.site-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.site-photo:hover img { transform: scale(1.03); }
+.site-tile { position: relative; display: flex; flex-direction: column; overflow: hidden; background: var(--s-soft); color: var(--s-ink); transition: transform .2s; }
+.site-tile:hover { transform: translateY(-2px); }
+.site-tile img { transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.site-tile:hover img { transform: scale(1.03); }
+@media (max-width: 1023px) {
+  .site { grid-template-columns: 1fr; }
+  .site-rail { position: fixed; inset: auto 0 0 0; top: auto; height: auto; flex-direction: row; padding: 0; border-right: 0; border-top: 1px solid var(--s-line); padding-bottom: env(safe-area-inset-bottom); }
+  .site-logo, .site-rail__foot { display: none; }
+  .site-nav { flex-direction: row; width: 100%; }
+  .site-nav__item { flex: 1; grid-template-columns: 1fr; justify-items: center; gap: 2px; min-height: 60px; padding: 6px 2px; font-size: 11px; }
+  .site-nav__item.active::before { left: 20%; right: 20%; top: 0; bottom: auto; width: auto; height: 3px; }
+  .site-nav__num, .site-nav__label { display: none; }
+  .site-nav__short { display: block; }
+  .site-screen { padding: 24px 20px 96px; }
+}
+@media (prefers-reduced-motion: reduce) { .site-screen-enter { animation: none; } .site-photo img, .site-tile img, .site-btn, .site-tile { transition: none; } }
+@keyframes bar { from { transform: scaleX(0); } to { transform: scaleX(1); } }

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f6f8f7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0c1413" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="Oqy — тренажёр функциональной грамотности для 7–9 классов. Работает без интернета." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Golos+Text:wght@400..800&family=Literata:opsz,wght@7..72,400;7..72,600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+    <title>Oqy — читай и понимай</title>
+    <script>
+      // тема до первой отрисовки, чтобы не мигало
+      try { var t = localStorage.getItem('oqy-theme'); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t; } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
