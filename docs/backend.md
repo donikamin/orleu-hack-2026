@@ -19,7 +19,7 @@ npm test && npm run typecheck       # в корне: тесты сервера
    Переключиться: сменить `AI_PROVIDER` в Vercel и сделать Redeploy. Код менять не нужно, весь ИИ в `server/ai.ts`.
 3. **BotFather:** токен. `TELEGRAM_WEBHOOK_SECRET` и `CRON_SECRET` — любые случайные строки.
 4. **Vercel → Settings → Environment Variables:** все имена из `.env.example`, затем Redeploy.
-5. После деплоя один раз: `npm run bot:setup -- https://адрес.vercel.app`.
+5. Бот: Vercel → проект → Settings → Cron Jobs → у `/api/cron` нажать **Run**. Рассылка сама подключит бота к сайту (и потом проверяет это каждый день). Запасной путь с компьютера: `npm run bot:setup -- https://адрес.vercel.app`.
 
 ## Что добавлено к контрактам (обратно совместимо)
 
