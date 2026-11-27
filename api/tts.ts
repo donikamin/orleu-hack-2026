@@ -29,16 +29,17 @@ function toWav(pcm: Buffer, mime: string): Buffer {
   return Buffer.concat([h, pcm]);
 }
 
-// Голоса ElevenLabs по языку: казахский текст читают казахские голоса, русский — русские (выбраны командой).
-// Чтобы голос из библиотеки работал через API, его надо добавить в «My Voices» аккаунта ElevenLabs.
-// Если голос недоступен, читает стандартный голос ElevenLabs (Sarah / Adam), он есть у всех аккаунтов.
+// Голоса ElevenLabs. По умолчанию стандартные Sarah и Adam: они есть у бесплатного аккаунта и читают и по-русски, и по-казахски.
+// Голоса из библиотеки бесплатный план через API не отдаёт (402). На платном плане можно задать свои по языку:
+//   ELEVENLABS_VOICE_KK_FEMALE=biokABXKofsvZPlKbROC  ELEVENLABS_VOICE_KK_MALE=wbGUrCE6cHpRbU9idaMy  (казахские, выбраны командой)
+//   ELEVENLABS_VOICE_FEMALE=t6lBrEl93uCiLR1Lgm8v     ELEVENLABS_VOICE_MALE=RjY1wx8VeYo2R2WFDXfX     (русские)
 // Rachel (21m00…) новым аккаунтам недоступна.
+const EL_DEFAULT = { female: 'EXAVITQu4vr4xnSDxMaL', male: 'pNInz6obpgDQGcFmaJgB' };
 const env = (k: string) => process.env[k]?.trim() || undefined;
 const EL_VOICES = {
-  kk: { female: env('ELEVENLABS_VOICE_KK_FEMALE') ?? 'biokABXKofsvZPlKbROC', male: env('ELEVENLABS_VOICE_KK_MALE') ?? 'wbGUrCE6cHpRbU9idaMy' },
-  ru: { female: env('ELEVENLABS_VOICE_FEMALE') ?? 't6lBrEl93uCiLR1Lgm8v', male: env('ELEVENLABS_VOICE_MALE') ?? 'RjY1wx8VeYo2R2WFDXfX' },
+  kk: { female: env('ELEVENLABS_VOICE_KK_FEMALE') ?? EL_DEFAULT.female, male: env('ELEVENLABS_VOICE_KK_MALE') ?? EL_DEFAULT.male },
+  ru: { female: env('ELEVENLABS_VOICE_FEMALE') ?? EL_DEFAULT.female, male: env('ELEVENLABS_VOICE_MALE') ?? EL_DEFAULT.male },
 };
-const EL_DEFAULT = { female: 'EXAVITQu4vr4xnSDxMaL', male: 'pNInz6obpgDQGcFmaJgB' };
 
 async function eleven(text: string, gender: 'female' | 'male', lang: 'ru' | 'kk'): Promise<Response> {
   const model = process.env.ELEVENLABS_MODEL?.trim() || 'eleven_v3';
