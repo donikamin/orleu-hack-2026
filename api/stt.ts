@@ -14,7 +14,7 @@ export const POST = handle(async (req) => {
   const kk = b.lang === 'kk-KZ';
   const model = process.env.STT_MODEL?.trim() || process.env.AI_MODEL?.trim() || 'gemini-3.5-flash-lite';
   try {
-    const res = await new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }).models.generateContent({
+    const res = await new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY, apiVersion: 'v1beta' }).models.generateContent({
       model,
       contents: [
         {

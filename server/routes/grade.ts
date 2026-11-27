@@ -1,6 +1,6 @@
-import { ask, obj, studentText, taskText } from '../server/ai';
-import { body, handle, HttpError, json, limit, str } from '../server/http';
-import { findTask } from '../server/store';
+import { ask, obj, studentText, taskText } from '../ai';
+import { body, handle, HttpError, json, limit, str } from '../http';
+import { findTask } from '../store';
 
 export const POST = handle(async (req) => {
   limit(req, 'grade', 60);

@@ -1,6 +1,6 @@
 // POST /api/tts — живой голос для озвучки текстов и ответов наставника, по-русски и по-казахски.
 // 1) ElevenLabs (ELEVENLABS_API_KEY): модель eleven_v3 знает казахский, звук mp3 22 кГц 32 кбит/с — ~4 КБ на секунду речи, лёгкий для 2G.
-// 2) Иначе Gemini TTS (GEMINI_API_KEY), WAV 24 кГц.
+// 2) Иначе Gemini TTS (GEMINI_API_KEY), WAV 24 кГц. Нужен API v1beta: в v1 нет настройки голоса (speechConfig).
 // Тело: { text: string, voice?: 'female' | 'male', lang?: 'ru' | 'kk' }.
 // Клиент озвучивает по одному предложению и кэширует звук на телефоне: второй раз текст звучит без сети.
 // Нет ключа GEMINI_API_KEY или нет сети — клиент сам переходит на голос телефона.
@@ -29,23 +29,43 @@ function toWav(pcm: Buffer, mime: string): Buffer {
   return Buffer.concat([h, pcm]);
 }
 
-// Готовые многоязычные голоса ElevenLabs; свои можно задать переменными окружения.
+// Голоса ElevenLabs. По умолчанию стандартные Sarah и Adam: они есть у бесплатного аккаунта и читают и по-русски, и по-казахски.
+// Голоса из библиотеки бесплатный план через API не отдаёт (402). На платном плане можно задать свои по языку:
+//   ELEVENLABS_VOICE_KK_FEMALE=biokABXKofsvZPlKbROC  ELEVENLABS_VOICE_KK_MALE=wbGUrCE6cHpRbU9idaMy  (казахские, выбраны командой)
+//   ELEVENLABS_VOICE_FEMALE=t6lBrEl93uCiLR1Lgm8v     ELEVENLABS_VOICE_MALE=RjY1wx8VeYo2R2WFDXfX     (русские)
+// Rachel (21m00…) новым аккаунтам недоступна.
+const EL_DEFAULT = { female: 'EXAVITQu4vr4xnSDxMaL', male: 'pNInz6obpgDQGcFmaJgB' };
+const env = (k: string) => process.env[k]?.trim() || undefined;
 const EL_VOICES = {
-  female: process.env.ELEVENLABS_VOICE_FEMALE?.trim() || '21m00Tcm4TlvDq8ikWAM',
-  male: process.env.ELEVENLABS_VOICE_MALE?.trim() || 'pNInz6obpgDQGcFmaJgB',
+  kk: { female: env('ELEVENLABS_VOICE_KK_FEMALE') ?? EL_DEFAULT.female, male: env('ELEVENLABS_VOICE_KK_MALE') ?? EL_DEFAULT.male },
+  ru: { female: env('ELEVENLABS_VOICE_FEMALE') ?? EL_DEFAULT.female, male: env('ELEVENLABS_VOICE_MALE') ?? EL_DEFAULT.male },
 };
 
 async function eleven(text: string, gender: 'female' | 'male', lang: 'ru' | 'kk'): Promise<Response> {
   const model = process.env.ELEVENLABS_MODEL?.trim() || 'eleven_v3';
-  const call = (withLang: boolean) =>
-    fetch(`https://api.elevenlabs.io/v1/text-to-speech/${EL_VOICES[gender]}?output_format=mp3_22050_32`, {
+  const call = (voice: string, withLang: boolean) =>
+    fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice}?output_format=mp3_22050_32`, {
       method: 'POST',
       headers: { 'xi-api-key': process.env.ELEVENLABS_API_KEY!, 'content-type': 'application/json', accept: 'audio/mpeg' },
       body: JSON.stringify({ text, model_id: model, ...(withLang ? { language_code: lang } : {}) }),
       signal: AbortSignal.timeout(20_000),
     });
-  let r = await call(true);
-  if (r.status === 400 || r.status === 422) r = await call(false); // модель не принимает language_code — определит язык сама
+  const voice = EL_VOICES[lang][gender];
+  // Бесплатный план не даёт голоса из библиотеки (402): запоминаем и сразу берём стандартный, без лишней секунды
+  if (blocked.has(voice)) return finish(await call(EL_DEFAULT[gender], true));
+  let r = await call(voice, true);
+  if (r.status === 400 || r.status === 422) r = await call(voice, false); // модель не принимает language_code — определит язык сама
+  if (!r.ok && r.status !== 401 && r.status !== 429) {
+    console.error('ElevenLabs voice', voice, r.status, (await r.text().catch(() => '')).slice(0, 200));
+    if (r.status === 402 || r.status === 403 || r.status === 404) blocked.add(voice);
+    r = await call(EL_DEFAULT[gender], true); // голос из библиотеки недоступен — стандартный голос
+  }
+  return finish(r);
+}
+
+const blocked = new Set<string>();
+
+async function finish(r: Response): Promise<Response> {
   if (!r.ok) {
     console.error('ElevenLabs TTS', r.status, (await r.text().catch(() => '')).slice(0, 200));
     throw new HttpError(r.status === 429 ? 503 : 502, 'Живой голос сейчас недоступен');
@@ -71,7 +91,7 @@ export const POST = handle(async (req) => {
   const model = process.env.TTS_MODEL?.trim() || 'gemini-3.8-flash-lite-tts';
 
   try {
-    const res = await new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }).models.generateContent({
+    const res = await new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY, apiVersion: 'v1beta' }).models.generateContent({
       model,
       contents: [{ role: 'user', parts: [{ text: lang === 'kk' ? `Read aloud in Kazakh with native Kazakh pronunciation: ${text}` : text }] }],
       config: {
