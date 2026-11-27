@@ -12,7 +12,7 @@ const VARIANT: Record<Variant, string> = {
   danger: 'bg-danger text-on-brand hover:bg-danger/90',
 };
 
-const BTN = 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2 font-semibold transition-colors disabled:cursor-not-allowed';
+const BTN = 'inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-2 font-semibold transition-colors disabled:cursor-not-allowed';
 
 export function Button({
   variant = 'primary',
@@ -40,7 +40,7 @@ export function PageHeader({ title, subtitle, back, actions }: { title: string; 
             ← Назад
           </Link>
         )}
-        <h1 className="text-2xl font-extrabold tracking-tight text-balance sm:text-3xl">{title}</h1>
+        <h1 className="text-2xl font-bold text-balance sm:text-[1.75rem]">{title}</h1>
         {subtitle && <p className="mt-1 text-muted">{subtitle}</p>}
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
@@ -55,7 +55,7 @@ export function Badge({ children, tone = 'neutral' }: { children: ReactNode; ton
     accent: 'bg-accent-soft text-accent border-accent/20',
     danger: 'bg-danger-soft text-danger border-danger/20',
   }[tone];
-  return <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${t}`}>{children}</span>;
+  return <span className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-semibold ${t}`}>{children}</span>;
 }
 
 export const LEVEL_BG = ['', 'bg-lv1', 'bg-lv2', 'bg-lv3', 'bg-lv4', 'bg-lv5'] as const;
@@ -96,12 +96,12 @@ export function Field({ label, hint, children }: { label: string; hint?: string;
 }
 
 export const inputClass =
-  'w-full min-h-11 rounded-xl border border-line bg-surface px-3 py-2 text-base text-ink placeholder:text-muted/70 focus:border-brand';
+  'w-full min-h-11 rounded-lg border border-line bg-surface px-3 py-2 text-base text-ink placeholder:text-muted/70 focus:border-brand';
 
 export function Notice({ tone = 'neutral', children }: { tone?: 'neutral' | 'danger' | 'brand'; children: ReactNode }) {
   const t = { neutral: 'bg-accent-soft border-accent/20', danger: 'bg-danger-soft border-danger/20 text-danger', brand: 'bg-brand-soft border-brand/20' }[tone];
   return (
-    <div role="status" className={`rounded-xl border px-4 py-3 text-sm ${t}`}>
+    <div role="status" className={`rounded-lg border px-4 py-3 text-sm ${t}`}>
       {children}
     </div>
   );

@@ -32,7 +32,7 @@ function Shell({ kicker, title, back, children }: { kicker: string; title: strin
         <Link to={back} className="inline-flex min-h-11 items-center font-semibold underline-offset-4 hover:underline">← Все задания</Link>
         <p className="site-kicker">{kicker}</p>
       </div>
-      <h1 id="task-h" className="display mt-4 text-[clamp(36px,4vw,64px)]">{title}</h1>
+      <h1 id="task-h" className="display mt-4 text-[clamp(26px,2.6vw,34px)]">{title}</h1>
       <div className="mt-6 grid flex-1 items-start gap-8 lg:grid-cols-[1.1fr_0.9fr]">{children}</div>
     </section>
   );
@@ -43,7 +43,7 @@ function Hints({ hints, shown }: { hints: readonly string[]; shown: number }) {
   return (
     <ol className="grid gap-2" aria-live="polite">
       {hints.slice(0, shown).map((h, i) => (
-        <li key={i} className="animate-rise border-l-4 border-[#c2410c] bg-[var(--s-soft)] p-4">
+        <li key={i} className="animate-rise border-l-2 border-[var(--s-read)] bg-[var(--s-read-soft)] p-4">
           <b>Подсказка {i + 1} из 3.</b> {h}
         </li>
       ))}
@@ -57,7 +57,7 @@ function Confidence({ value, onChange, disabled }: { value: number; onChange: (v
       <legend className="mb-2 text-sm font-semibold text-[var(--s-muted)]">Перед ответом: насколько вы уверены?</legend>
       <div className="grid grid-cols-3 gap-2">
         {CONF.map((c) => (
-          <label key={c.v} className={`flex min-h-11 cursor-pointer items-center justify-center border-2 px-2 text-sm font-semibold ${value === c.v ? 'border-[var(--s-ink)] bg-[var(--s-ink)] text-[var(--s-bg)]' : 'border-[var(--s-line)] hover:border-[var(--s-ink)]'}`}>
+          <label key={c.v} className={`flex min-h-11 cursor-pointer items-center justify-center border-2 px-2 text-sm font-semibold ${value === c.v ? 'border-[var(--s-read)] bg-[var(--s-read)] text-[var(--color-on-brand)]' : 'border-[var(--s-line)] hover:border-[var(--s-read)]'}`}>
             <input type="radio" name="conf" className="sr-only" checked={value === c.v} onChange={() => onChange(c.v)} />
             {c.label}
           </label>
@@ -70,7 +70,7 @@ function Confidence({ value, onChange, disabled }: { value: number; onChange: (v
 function Result({ ok, wrong, text, next }: { ok: boolean; wrong: number; text: string; next: string | null }) {
   return (
     <div className="grid gap-3 animate-rise" aria-live="polite">
-      <p className={`border-l-4 p-4 ${ok ? 'border-[#0a0a0a] bg-[var(--s-mint)] text-[#0a0a0a]' : 'border-[#c2410c] bg-[var(--s-soft)]'}`}>
+      <p className={`border-l-4 p-4 ${ok ? 'border-[var(--s-ok)] bg-[var(--s-mint)] text-[var(--s-ink)]' : 'border-[var(--s-warn)] bg-[var(--s-soft)]'}`}>
         <b>{ok ? (wrong ? `Верно, с ${wrong} ошибк${wrong === 1 ? 'ой' : 'ами'}.` : 'Верно с первого раза.') : 'Разбор.'}</b> {text}
       </p>
       <div className="flex flex-wrap gap-2">
@@ -150,9 +150,9 @@ function ReadingTask({ task }: { task: Task }) {
                 disabled={done || !conf || bad}
                 aria-pressed={multi ? on : undefined}
                 onClick={() => (multi ? setPicked((p) => { const n = new Set(p); if (n.has(i)) n.delete(i); else n.add(i); return n; }) : pickSingle(i))}
-                className={`flex min-h-12 items-start gap-3 border-2 p-3 text-left transition-colors ${right ? 'border-[#0a0a0a] bg-[var(--s-mint)] text-[#0a0a0a]' : bad ? 'border-[#c2410c] text-[#c2410c] line-through' : on ? 'border-[var(--s-ink)] bg-[var(--s-soft)]' : 'border-[var(--s-line)] enabled:hover:border-[var(--s-ink)]'}`}
+                className={`flex min-h-12 items-start gap-3 border-2 p-3 text-left transition-colors ${right ? 'border-[var(--s-ok)] bg-[var(--s-mint)] text-[var(--s-ink)]' : bad ? 'border-[var(--s-warn)] text-[var(--s-warn)] line-through' : on ? 'border-[var(--s-read)] bg-[var(--s-soft)]' : 'border-[var(--s-line)] enabled:hover:border-[var(--s-read)]'}`}
               >
-                <b className="w-5 shrink-0 font-['Oswald']">{LETTERS[i]}</b>
+                <b className="w-5 shrink-0 ">{LETTERS[i]}</b>
                 <span>{o}</span>
               </button>
             );
@@ -192,7 +192,7 @@ function ReadingTask({ task }: { task: Task }) {
               {ai === 'busy' ? 'ИИ думает…' : 'Спросить ИИ-репетитора'}
             </button>
             {ai && ai !== 'busy' && (
-              <p className="animate-rise border-l-4 border-[var(--s-ink)] bg-[var(--s-mint)] p-4 text-[#0a0a0a]" aria-live="polite">
+              <p className="animate-rise border-l-4 border-[var(--s-ok)] bg-[var(--s-mint)] p-4 text-[var(--s-ink)]" aria-live="polite">
                 {ai === 'none' ? 'ИИ сейчас недоступен — воспользуйтесь подсказками ниже, они работают без сети.' : <><b>ИИ-репетитор:</b> {ai.text} <span className="block text-xs opacity-70">{ai.source} · ответ не раскрывается</span></>}
               </p>
             )}
@@ -235,7 +235,7 @@ function MathTaskView({ task }: { task: MathTask }) {
         {task.table && (
           <table className="mt-4 w-full border-collapse text-left text-lg">
             <thead>
-              <tr className="border-b-2 border-[var(--s-ink)]">
+              <tr className="border-b-2 border-[var(--s-read)]">
                 {task.table.head.map((h) => <th key={h} scope="col" className="py-2 pr-4 font-semibold">{h}</th>)}
               </tr>
             </thead>
@@ -251,7 +251,7 @@ function MathTaskView({ task }: { task: MathTask }) {
       </article>
       <form onSubmit={check} className="grid gap-4 lg:sticky lg:top-8">
         <label htmlFor="math-answer" className="text-xl font-semibold">{task.question}</label>
-        <div className="flex items-stretch border-2 border-[var(--s-ink)]">
+        <div className="flex items-stretch border-2 border-[var(--s-read)]">
           <input
             id="math-answer"
             name="answer"
@@ -261,9 +261,9 @@ function MathTaskView({ task }: { task: MathTask }) {
             disabled={done}
             onChange={(e) => setValue(e.target.value)}
             placeholder="Ответ…"
-            className="min-h-14 min-w-0 flex-1 bg-transparent px-4 font-['Oswald'] text-3xl outline-none"
+            className="min-h-14 min-w-0 flex-1 bg-transparent px-4 text-3xl outline-none"
           />
-          <span className="grid place-items-center px-4 font-['Oswald'] text-xl text-[var(--s-muted)]">{task.unit}</span>
+          <span className="grid place-items-center px-4 text-xl text-[var(--s-muted)]">{task.unit}</span>
         </div>
         {!done && (
           <div className="flex flex-wrap gap-2">
@@ -271,7 +271,7 @@ function MathTaskView({ task }: { task: MathTask }) {
             <button type="button" onClick={() => setHints((h) => Math.min(3, h + 1))} disabled={hints >= 3} className="site-btn site-btn--ghost disabled:opacity-40">Подсказка ({hints}/3)</button>
           </div>
         )}
-        {wrong > 0 && !done && <p className="font-semibold text-[#c2410c]" aria-live="polite">Пока не сходится. Попыток: {wrong}.</p>}
+        {wrong > 0 && !done && <p className="font-semibold text-[var(--s-warn)]" aria-live="polite">Пока не сходится. Попыток: {wrong}.</p>}
         {!done && <Hints hints={task.hints} shown={hints} />}
         {done && <Result ok wrong={wrong} text={task.explanation} next={nextId(task.id)} />}
       </form>

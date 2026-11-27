@@ -108,7 +108,7 @@ export default function DataPage() {
 
       {/* Печатный лист: плакат + карточки. На экране — предпросмотр. */}
       <section aria-label="Плакат класса" className="print-page rounded-[var(--radius-card)] border border-line bg-surface p-8 text-center print:border-0">
-        <p className="text-sm font-semibold uppercase tracking-widest text-accent">Oqy · читай и понимай</p>
+        <p className="text-sm font-semibold text-accent">Oqy · читай и понимай</p>
         <h2 className="mt-2 text-3xl font-extrabold">{cls.name}</h2>
         <p className="mt-6 text-muted">Код класса</p>
         <p translate="no" className="font-mono text-6xl font-medium tracking-[0.2em]">{cls.code}</p>
@@ -123,7 +123,7 @@ export default function DataPage() {
         {numbers.map((n) => (
           <div key={n} className="border border-dashed border-line p-4 text-center">
             <p className="text-xs text-muted">Код класса</p>
-            <p className="font-mono text-lg font-medium tracking-widest">{cls.code}</p>
+            <p className="font-mono text-lg font-medium">{cls.code}</p>
             <p className="mt-1 text-xs text-muted">Мой номер</p>
             <p className="text-3xl font-extrabold tabular-nums">{n}</p>
           </div>

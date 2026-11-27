@@ -1,91 +1,99 @@
 @import 'tailwindcss';
 
 /*
-  Дизайн-система Oqy (часть C).
-  Палитра: ui-ux-pro-max, профиль № 179 «LMS / образование» — бирюзовый прогресс + янтарный акцент.
-  Шрифты: Golos Text (интерфейс; кириллица и казахские буквы, cyrillic-ext) + Literata (тексты заданий).
-  Правила: контраст текста ≥ 4.5:1 в обеих темах, цели касания ≥ 44px, без фиолетового.
+  Дизайн-система Oqy: «школьная тетрадь».
+  Белый лист, текст и кнопки цвета синей шариковой ручки, красный (ручка учителя) только для ошибок
+  и линии полей у текста для чтения, зелёный только для «верно». Без градиентов, теней и прыжков.
+  Шрифты: Golos Text (интерфейс; кириллица и казахские буквы) + Literata (тексты заданий, как в учебнике).
+  Правила: контраст текста ≥ 4.5:1 в обеих темах, цели касания ≥ 44px.
 */
 @theme {
   --font-sans: 'Golos Text', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Literata', Georgia, serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  --color-paper: #f6f8f7;
+  --color-paper: #f4f6f9;
   --color-surface: #ffffff;
-  --color-raised: #eef3f1;
-  --color-ink: #10201e;
-  --color-muted: #4b5a58;
-  --color-line: #dce5e2;
+  --color-raised: #eef1f6;
+  --color-ink: #1b2333;
+  --color-muted: #566072;
+  --color-line: #d9dee7;
 
-  --color-brand: #0f766e;
-  --color-brand-strong: #115e59;
-  --color-brand-soft: #dff5f0;
+  /* синяя ручка */
+  --color-brand: #2446b5;
+  --color-brand-strong: #1a3591;
+  --color-brand-soft: #e9eefc;
   --color-on-brand: #ffffff;
-  --color-accent: #b45309;
-  --color-accent-soft: #fdf1df;
-  --color-danger: #b42318;
-  --color-danger-soft: #fdeceb;
-  --color-mint: #a1ffcb;
+  /* предупреждение */
+  --color-accent: #9a5b00;
+  --color-accent-soft: #fbf1df;
+  /* красная ручка учителя */
+  --color-danger: #c22f40;
+  --color-danger-soft: #fcebed;
+  /* «верно» */
+  --color-mint: #dcf0e3;
+  --color-ok: #1d7347;
 
-  /* Уровни навыка 1…5: одна последовательная гамма (тёплый → бирюзовый); в ячейке всегда цифра */
-  --color-lv1: #fbe3df;
-  --color-lv2: #fcecd3;
-  --color-lv3: #eef1dc;
-  --color-lv4: #c9ebde;
-  --color-lv5: #8fd9c0;
+  /* Уровни навыка 1…5: от красной ручки к синей; в ячейке всегда цифра */
+  --color-lv1: #f9dfe2;
+  --color-lv2: #f7e9d6;
+  --color-lv3: #eceff4;
+  --color-lv4: #dbe4fb;
+  --color-lv5: #b9cbf7;
 
-  --radius-card: 16px;
-  --shadow-card: 0 1px 2px rgb(16 32 30 / 0.04), 0 8px 24px -12px rgb(16 32 30 / 0.12);
+  --radius-card: 10px;
+  --shadow-card: none;
 }
 
 /* Тёмная тема: по системной настройке или по переключателю (data-theme на <html>) */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --color-paper: #0c1413;
-    --color-surface: #131e1c;
-    --color-raised: #1a2725;
-    --color-ink: #e6efec;
-    --color-muted: #9fb1ad;
-    --color-line: #263533;
-    --color-brand: #2dd4bf;
-    --color-brand-strong: #5eead4;
-    --color-brand-soft: #123a35;
-    --color-on-brand: #062320;
-    --color-accent: #fbbf24;
-    --color-accent-soft: #3a2a10;
-    --color-danger: #f97066;
-    --color-danger-soft: #3d1715;
-    --color-lv1: #4a2420;
-    --color-lv2: #4a3518;
-    --color-lv3: #36391f;
-    --color-lv4: #1d4a3e;
-    --color-lv5: #1f6b58;
-    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
+    --color-paper: #11151c;
+    --color-surface: #171c25;
+    --color-raised: #1d2330;
+    --color-ink: #e6e9f0;
+    --color-muted: #9aa3b3;
+    --color-line: #2a3140;
+    --color-brand: #8ea7ff;
+    --color-brand-strong: #b3c4ff;
+    --color-brand-soft: #1e2847;
+    --color-on-brand: #0d1530;
+    --color-accent: #f0b458;
+    --color-accent-soft: #33260f;
+    --color-danger: #f2808c;
+    --color-danger-soft: #3a1c22;
+    --color-mint: #173a28;
+    --color-ok: #74d39c;
+    --color-lv1: #4a2229;
+    --color-lv2: #463318;
+    --color-lv3: #262c38;
+    --color-lv4: #22305a;
+    --color-lv5: #31458a;
     color-scheme: dark;
   }
 }
 :root[data-theme='dark'] {
-  --color-paper: #0c1413;
-  --color-surface: #131e1c;
-  --color-raised: #1a2725;
-  --color-ink: #e6efec;
-  --color-muted: #9fb1ad;
-  --color-line: #263533;
-  --color-brand: #2dd4bf;
-  --color-brand-strong: #5eead4;
-  --color-brand-soft: #123a35;
-  --color-on-brand: #062320;
-  --color-accent: #fbbf24;
-  --color-accent-soft: #3a2a10;
-  --color-danger: #f97066;
-  --color-danger-soft: #3d1715;
-  --color-lv1: #4a2420;
-  --color-lv2: #4a3518;
-  --color-lv3: #36391f;
-  --color-lv4: #1d4a3e;
-  --color-lv5: #1f6b58;
-  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
+  --color-paper: #11151c;
+  --color-surface: #171c25;
+  --color-raised: #1d2330;
+  --color-ink: #e6e9f0;
+  --color-muted: #9aa3b3;
+  --color-line: #2a3140;
+  --color-brand: #8ea7ff;
+  --color-brand-strong: #b3c4ff;
+  --color-brand-soft: #1e2847;
+  --color-on-brand: #0d1530;
+  --color-accent: #f0b458;
+  --color-accent-soft: #33260f;
+  --color-danger: #f2808c;
+  --color-danger-soft: #3a1c22;
+  --color-mint: #173a28;
+  --color-ok: #74d39c;
+  --color-lv1: #4a2229;
+  --color-lv2: #463318;
+  --color-lv3: #262c38;
+  --color-lv4: #22305a;
+  --color-lv5: #31458a;
   color-scheme: dark;
 }
 
@@ -118,10 +126,15 @@
   h2,
   h3 {
     text-wrap: balance;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.01em;
+  }
+  /* Жирность не выше 700: крупные «чёрные» заголовки утомляют */
+  .font-extrabold,
+  .font-black {
+    font-weight: 700;
   }
   :focus-visible {
-    outline: 3px solid var(--color-accent);
+    outline: 3px solid var(--color-brand);
     outline-offset: 2px;
     border-radius: 6px;
   }
@@ -141,11 +154,17 @@
   }
 }
 
-/* Текст для чтения в заданиях (часть A): засечки, 18px, свободная строка. className="text-read" */
+/* Текст для чтения в заданиях: засечки, 18px, свободная строка. className="text-read" */
 @utility text-read {
   font-family: var(--font-serif);
   font-size: 1.125rem;
-  line-height: 1.7;
+  line-height: 1.75;
+}
+/* Абзац текста для чтения — с красной линией полей, как в тетради (варианты-кнопки без неё) */
+:where(p, div).text-read {
+  max-width: 68ch;
+  border-left: 2px solid color-mix(in srgb, var(--color-danger) 55%, transparent);
+  padding-left: 1rem;
 }
 
 /* Спокойное появление контента экрана (один раз, без анимации при прокрутке) */

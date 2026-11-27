@@ -70,7 +70,7 @@ export default function SiteMe() {
     <section className="site-screen" aria-labelledby="me-h">
       <p className="site-kicker">Мой кабинет</p>
       <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
-        <h1 id="me-h" className="display text-[clamp(44px,5.2vw,84px)]">Мой прогресс</h1>
+        <h1 id="me-h" className="display text-[clamp(26px,2.6vw,34px)]">Мой прогресс</h1>
         <InstallButton />
       </div>
 
@@ -83,7 +83,7 @@ export default function SiteMe() {
         ].map(([k, v]) => (
           <div key={k} className="bg-[var(--s-bg)] p-5">
             <dt className="text-sm text-[var(--s-muted)]">{k}</dt>
-            <dd className="display mt-1 text-5xl">{v}</dd>
+            <dd className="display mt-1 text-3xl">{v}</dd>
           </div>
         ))}
       </dl>
@@ -95,13 +95,13 @@ export default function SiteMe() {
             <ul className="mt-3 grid gap-3">
               {profile.map((p) => (
                 <li key={p.key}>
-                  <div className="flex items-baseline justify-between"><span className="font-semibold">{p.label}</span><span className="font-['Oswald'] text-xl">{p.n ? `${p.pct}%` : '—'}</span></div>
-                  <div className="mt-1 h-2.5 bg-[var(--s-soft)]"><div className="h-full bg-[var(--s-ink)] transition-[width] duration-700" style={{ width: `${p.pct}%` }} /></div>
+                  <div className="flex items-baseline justify-between"><span className="font-semibold">{p.label}</span><span className="text-xl">{p.n ? `${p.pct}%` : '—'}</span></div>
+                  <div className="mt-1 h-2.5 bg-[var(--s-soft)]"><div className="h-full bg-[var(--s-read)] transition-[width] duration-700" style={{ width: `${p.pct}%` }} /></div>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="border-2 border-[var(--s-ink)] p-5">
+          <div className="border-2 border-[var(--s-read)] p-5">
             <p className="site-kicker">Рекомендация ИИ</p>
             <p className="mt-2 text-xl">
               {solved.length ? <>Слабее всего сейчас — <b>{rec.area}</b>. Начните с урока, затем закрепите заданием.</> : <>Начните с короткого урока, потом решите первое задание — профиль заполнится сам.</>}
@@ -126,7 +126,7 @@ export default function SiteMe() {
                     <tr key={a.taskId} className="border-b border-[var(--s-line)]">
                       <td className="py-2 pr-2">{titleOf(a.taskId)}</td>
                       <td className="py-2 pr-2 text-[var(--s-muted)]">{KIND[a.kind]}</td>
-                      <td className="py-2 text-right font-['Oswald'] text-lg">{a.score === 1 ? '5' : a.score === 0.5 ? '4' : '2'}</td>
+                      <td className="py-2 text-right text-lg">{a.score === 1 ? '5' : a.score === 0.5 ? '4' : '2'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -164,7 +164,7 @@ function AiPanel() {
       <h2 className="text-xl font-semibold">ИИ-репетитор</h2>
       <div className="mt-3 grid gap-2" role="radiogroup" aria-label="Режим ИИ">
         {MODES.map((m) => (
-          <label key={m.v} className={`flex min-h-12 cursor-pointer items-start gap-3 border-2 p-3 ${s.mode === m.v ? 'border-[var(--s-ink)]' : 'border-[var(--s-line)]'}`}>
+          <label key={m.v} className={`flex min-h-12 cursor-pointer items-start gap-3 border-2 p-3 ${s.mode === m.v ? 'border-[var(--s-read)]' : 'border-[var(--s-line)]'}`}>
             <input type="radio" name="ai-mode" checked={s.mode === m.v} onChange={() => update({ mode: m.v })} className="mt-1 accent-[var(--s-ink)]" />
             <span><b>{m.label}</b><span className="block text-sm text-[var(--s-muted)]">{m.text}</span></span>
           </label>

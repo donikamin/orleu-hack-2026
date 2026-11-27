@@ -14,7 +14,7 @@ export default function SiteCase() {
       <p className="site-kicker">Задача кейса</p>
       <div className="mt-6 grid flex-1 items-center gap-10 lg:grid-cols-[1.1fr_1fr]">
         <div>
-          <h1 id="case-h" className="display text-[clamp(44px,5.6vw,88px)]">
+          <h1 id="case-h" className="display text-[clamp(26px,2.6vw,34px)]">
             2 из 3 подростков
             <br />
             не понимают текст
@@ -28,7 +28,7 @@ export default function SiteCase() {
             <li key={b.label}>
               <div className="flex items-baseline justify-between">
                 <span className={b.ref ? 'text-[var(--s-muted)]' : 'font-semibold'}>{b.label}</span>
-                <span className="display text-[clamp(40px,4.4vw,72px)]">{b.v}%</span>
+                <span className="display text-[clamp(26px,2.6vw,34px)]">{b.v}%</span>
               </div>
               <div className="mt-2 h-3 bg-[var(--s-soft)]">
                 <div

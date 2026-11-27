@@ -35,10 +35,10 @@ export function DemoGuide() {
     );
 
   return (
-    <section aria-labelledby="demo-guide-h" className="no-print mb-6 border-2 border-ink bg-surface p-5">
+    <section aria-labelledby="demo-guide-h" className="no-print mb-6 rounded-[var(--radius-card)] border border-line bg-surface p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="max-w-3xl">
-          <p className="text-xs font-bold uppercase tracking-widest text-accent">Вы в кабинете учителя</p>
+          <p className="text-xs font-bold text-accent">Вы в кабинете учителя</p>
           <h2 id="demo-guide-h" className="mt-1 text-xl font-extrabold">Так учитель видит свой класс после того, как ученики порешали задания</h2>
           <p className="mt-2 text-muted">
             Это пример: 12 вымышленных учеников 8 класса, их результаты за несколько недель. Каждый ученик решал задания в телефоне без
@@ -55,7 +55,7 @@ export function DemoGuide() {
             <NavLink
               to={s.to}
               end={s.end}
-              className={({ isActive }) => `flex h-full flex-col gap-1 border-2 p-3 transition-colors ${isActive ? 'border-ink bg-brand-soft' : 'border-line hover:border-ink'}`}
+              className={({ isActive }) => `flex h-full flex-col gap-1 rounded-lg border p-3 transition-colors ${isActive ? 'border-brand bg-brand-soft' : 'border-line hover:border-muted'}`}
             >
               <span className="text-xs font-bold text-brand">{i + 1}</span>
               <span className="font-semibold">{s.title}</span>

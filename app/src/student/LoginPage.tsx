@@ -30,7 +30,7 @@ export default function LoginPage({ tasks, current }: { tasks: Task[]; current?:
       <p className="mt-1 text-muted">Без пароля и без имени. Интернет не нужен.</p>
       <form onSubmit={submit} className="mt-5 grid gap-4" noValidate>
         <Field label="Код класса" hint="Его даёт учитель. Попробовать без учителя: DEMO">
-          <input className={`${inputClass} font-mono uppercase`} value={code} onChange={(e) => setCode(e.target.value)} autoComplete="off" autoCapitalize="characters" spellCheck={false} />
+          <input className={`${inputClass} font-mono`} value={code} onChange={(e) => setCode(e.target.value)} autoComplete="off" autoCapitalize="characters" spellCheck={false} />
         </Field>
         <Field label="Твой номер в журнале">
           <input className={inputClass} value={number} onChange={(e) => setNumber(e.target.value)} inputMode="numeric" autoComplete="off" />

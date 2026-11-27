@@ -63,7 +63,7 @@ export default function SiteHome() {
           <em>{lessonsDone} из {LESSONS.length} пройдено →</em>
           <Steps />
         </Link>
-        <Link to="/texts" className="hub__tile hub__tile--read" style={{ background: 'linear-gradient(150deg,#0ea5e9,#0369a1)' }}>
+        <Link to="/texts" className="hub__tile hub__tile--read">
           <b>Тексты</b>
           <span>Статья, объявление, рассказ, интервью, фейк-новость</span>
           <em>Читать →</em>

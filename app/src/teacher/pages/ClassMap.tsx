@@ -31,7 +31,7 @@ export default function ClassMap() {
           Отсканировать первый QR
         </Link>
         <p className="mt-3 text-sm">
-          Код класса для учеников: <span className="font-mono font-bold tracking-widest text-ink">{cls.code}</span>
+          Код класса для учеников: <span className="font-mono font-bold text-ink">{cls.code}</span>
         </p>
       </EmptyState>
     );
