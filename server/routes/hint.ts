@@ -1,7 +1,7 @@
-import { ask, hasAi, obj, studentText, taskText } from '../server/ai';
-import { body, handle, HttpError, json, limit, str } from '../server/http';
-import { revealsAnswer } from '../server/leak';
-import { findTask } from '../server/store';
+import { ask, hasAi, obj, studentText, taskText } from '../ai';
+import { body, handle, HttpError, json, limit, str } from '../http';
+import { revealsAnswer } from '../leak';
+import { findTask } from '../store';
 
 export const POST = handle(async (req) => {
   const b = await body(req, 20_000);

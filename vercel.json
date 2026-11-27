@@ -5,6 +5,18 @@
   "outputDirectory": "app/dist",
   "rewrites": [
     {
+      "source": "/api/hint",
+      "destination": "/api/check?r=hint"
+    },
+    {
+      "source": "/api/grade",
+      "destination": "/api/check?r=grade"
+    },
+    {
+      "source": "/api/why",
+      "destination": "/api/check?r=why"
+    },
+    {
       "source": "/((?!api/|home/).*)",
       "destination": "/index.html"
     }

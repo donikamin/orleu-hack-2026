@@ -1,6 +1,6 @@
 // POST /api/tts — живой голос для озвучки текстов и ответов наставника, по-русски и по-казахски.
 // 1) ElevenLabs (ELEVENLABS_API_KEY): модель eleven_v3 знает казахский, звук mp3 22 кГц 32 кбит/с — ~4 КБ на секунду речи, лёгкий для 2G.
-// 2) Иначе Gemini TTS (GEMINI_API_KEY), WAV 24 кГц.
+// 2) Иначе Gemini TTS (GEMINI_API_KEY), WAV 24 кГц. Нужен API v1beta: в v1 нет настройки голоса (speechConfig).
 // Тело: { text: string, voice?: 'female' | 'male', lang?: 'ru' | 'kk' }.
 // Клиент озвучивает по одному предложению и кэширует звук на телефоне: второй раз текст звучит без сети.
 // Нет ключа GEMINI_API_KEY или нет сети — клиент сам переходит на голос телефона.
@@ -71,7 +71,7 @@ export const POST = handle(async (req) => {
   const model = process.env.TTS_MODEL?.trim() || 'gemini-3.8-flash-lite-tts';
 
   try {
-    const res = await new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }).models.generateContent({
+    const res = await new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY, apiVersion: 'v1beta' }).models.generateContent({
       model,
       contents: [{ role: 'user', parts: [{ text: lang === 'kk' ? `Read aloud in Kazakh with native Kazakh pronunciation: ${text}` : text }] }],
       config: {

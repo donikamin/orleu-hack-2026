@@ -24,13 +24,13 @@ import * as bot from '../api/bot';
 import * as classGet from '../api/class/[code]';
 import * as classNew from '../api/class/index';
 import * as cron from '../api/cron';
-import * as grade from '../api/grade';
-import * as hint from '../api/hint';
+import * as grade from './routes/grade';
+import * as hint from './routes/hint';
 import * as packApi from '../api/pack';
 import * as photo from '../api/photo-tasks';
 import * as sync from '../api/sync';
 import * as tasksApi from '../api/tasks';
-import * as why from '../api/why';
+import * as why from './routes/why';
 import { makeBot, parseId, pickDaily, plainReport } from './bot';
 import { revealsAnswer } from './leak';
 import { isTask, pack } from './pack';
@@ -295,5 +295,17 @@ describe('бот', () => {
     expect(calls.at(-1)!.payload.text).toContain('по воскресеньям');
     await msg(20, '/stop');
     expect(await store().chatOf({ classCode: 'DEMO', number: 5 }, 'parent')).toBeNull();
+  });
+});
+
+describe('объединённая функция /api/check', () => {
+  it('по ?r= вызывает hint, grade, why; без r — 404', async () => {
+    const { POST } = await import('../api/check');
+    vi.stubEnv('ANTHROPIC_API_KEY', '');
+    vi.stubEnv('GEMINI_API_KEY', '');
+    const r = await POST(new Request('http://x/api/check?r=hint', { method: 'POST', body: JSON.stringify({ taskId: 'c-loc-01', answer: '', hintLevel: 0 }) }));
+    expect(await r.json()).toEqual({ hint: pack()[0].hints[0] });
+    expect((await POST(new Request('http://x/api/check?r=why', { method: 'POST', body: JSON.stringify({ taskId: 'c-loc-01', reason: 'потому что' }) }))).status).toBe(503);
+    expect((await POST(new Request('http://x/api/check', { method: 'POST', body: '{}' }))).status).toBe(404);
   });
 });

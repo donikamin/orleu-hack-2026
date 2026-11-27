@@ -6,6 +6,9 @@ import path from 'node:path';
 if (fs.existsSync('.env.local')) process.loadEnvFile('.env.local');
 const root = path.resolve('api');
 
+// те же rewrites, что в vercel.json
+const REWRITE: Record<string, string> = { hint: 'check', grade: 'check', why: 'check' };
+
 function route(pathname: string): string | undefined {
   const rel = pathname.replace(/^\/api\/?/, '');
   if (!/^[\w-]+(\/[\w-]+)?$/.test(rel)) return;
@@ -15,6 +18,11 @@ function route(pathname: string): string | undefined {
 http
   .createServer(async (req, res) => {
     const url = new URL(req.url ?? '/', 'http://localhost:3001');
+    const name = url.pathname.replace(/^\/api\//, '');
+    if (REWRITE[name]) {
+      url.pathname = `/api/${REWRITE[name]}`;
+      url.searchParams.set('r', name);
+    }
     const file = route(url.pathname);
     const fn = file && (require(file) as Record<string, ((r: Request) => Promise<Response>) | undefined>)[req.method ?? ''];
     if (!fn) return void res.writeHead(file ? 405 : 404, { 'content-type': 'application/json' }).end('{"error":"Нет такого адреса"}');
