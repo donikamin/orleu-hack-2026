@@ -29,23 +29,42 @@ function toWav(pcm: Buffer, mime: string): Buffer {
   return Buffer.concat([h, pcm]);
 }
 
-// Готовые многоязычные голоса ElevenLabs; свои можно задать переменными окружения.
+// Голоса ElevenLabs по языку: казахский текст читают казахские голоса, русский — русские (выбраны командой).
+// Чтобы голос из библиотеки работал через API, его надо добавить в «My Voices» аккаунта ElevenLabs.
+// Если голос недоступен, читает стандартный голос ElevenLabs (Sarah / Adam), он есть у всех аккаунтов.
+// Rachel (21m00…) новым аккаунтам недоступна.
+const env = (k: string) => process.env[k]?.trim() || undefined;
 const EL_VOICES = {
-  female: process.env.ELEVENLABS_VOICE_FEMALE?.trim() || '21m00Tcm4TlvDq8ikWAM',
-  male: process.env.ELEVENLABS_VOICE_MALE?.trim() || 'pNInz6obpgDQGcFmaJgB',
+  kk: { female: env('ELEVENLABS_VOICE_KK_FEMALE') ?? 'biokABXKofsvZPlKbROC', male: env('ELEVENLABS_VOICE_KK_MALE') ?? 'wbGUrCE6cHpRbU9idaMy' },
+  ru: { female: env('ELEVENLABS_VOICE_FEMALE') ?? 't6lBrEl93uCiLR1Lgm8v', male: env('ELEVENLABS_VOICE_MALE') ?? 'RjY1wx8VeYo2R2WFDXfX' },
 };
+const EL_DEFAULT = { female: 'EXAVITQu4vr4xnSDxMaL', male: 'pNInz6obpgDQGcFmaJgB' };
 
 async function eleven(text: string, gender: 'female' | 'male', lang: 'ru' | 'kk'): Promise<Response> {
   const model = process.env.ELEVENLABS_MODEL?.trim() || 'eleven_v3';
-  const call = (withLang: boolean) =>
-    fetch(`https://api.elevenlabs.io/v1/text-to-speech/${EL_VOICES[gender]}?output_format=mp3_22050_32`, {
+  const call = (voice: string, withLang: boolean) =>
+    fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice}?output_format=mp3_22050_32`, {
       method: 'POST',
       headers: { 'xi-api-key': process.env.ELEVENLABS_API_KEY!, 'content-type': 'application/json', accept: 'audio/mpeg' },
       body: JSON.stringify({ text, model_id: model, ...(withLang ? { language_code: lang } : {}) }),
       signal: AbortSignal.timeout(20_000),
     });
-  let r = await call(true);
-  if (r.status === 400 || r.status === 422) r = await call(false); // модель не принимает language_code — определит язык сама
+  const voice = EL_VOICES[lang][gender];
+  // Бесплатный план не даёт голоса из библиотеки (402): запоминаем и сразу берём стандартный, без лишней секунды
+  if (blocked.has(voice)) return finish(await call(EL_DEFAULT[gender], true));
+  let r = await call(voice, true);
+  if (r.status === 400 || r.status === 422) r = await call(voice, false); // модель не принимает language_code — определит язык сама
+  if (!r.ok && r.status !== 401 && r.status !== 429) {
+    console.error('ElevenLabs voice', voice, r.status, (await r.text().catch(() => '')).slice(0, 200));
+    if (r.status === 402 || r.status === 403 || r.status === 404) blocked.add(voice);
+    r = await call(EL_DEFAULT[gender], true); // голос из библиотеки недоступен — стандартный голос
+  }
+  return finish(r);
+}
+
+const blocked = new Set<string>();
+
+async function finish(r: Response): Promise<Response> {
   if (!r.ok) {
     console.error('ElevenLabs TTS', r.status, (await r.text().catch(() => '')).slice(0, 200));
     throw new HttpError(r.status === 429 ? 503 : 502, 'Живой голос сейчас недоступен');
