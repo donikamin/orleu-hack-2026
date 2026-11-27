@@ -1,8 +1,8 @@
 /* ================= ПРИЛОЖЕНИЕ УЧЕНИКА И ЛЕНДИНГ (src/site) =================
-   «Школьная тетрадь», как и панель учителя: один набор цветов из index.css.
-   Белый лист, синяя ручка для действий, красная — только для ошибок, зелёная — только для «верно».
-   Разделы различаются значками и словами, а не цветом. Без градиентов, теней и прыжков при наведении:
-   движение только в ответ на действие человека. */
+   Основа — «школьная тетрадь», как у учителя: белый лист, синяя ручка, красная — ошибки, зелёная — «верно».
+   Поверх — свой цвет у каждого раздела (чтение синее, математика оранжевая, ИИ-наставник зелёный),
+   но мягко: цветной значок, метка и тонкая полоса, а не градиентная плитка. Ярко только одно место —
+   плитка ИИ-наставника на главной. Без теней и прыжков: при наведении меняется только рамка. */
 .site {
   --s-bg: var(--color-paper);
   --s-card: var(--color-surface);
@@ -10,15 +10,17 @@
   --s-muted: var(--color-muted);
   --s-line: var(--color-line);
   --s-soft: var(--color-raised);
-  /* бывшие цвета разделов: теперь одна синяя ручка */
-  --s-read: var(--color-brand);
-  --s-read-soft: var(--color-brand-soft);
-  --s-math: var(--color-brand);
-  --s-math-ink: var(--color-brand);
-  --s-math-soft: var(--color-brand-soft);
-  --s-ai: var(--color-brand);
-  --s-ai-ink: var(--color-brand);
-  --s-ai-soft: var(--color-brand-soft);
+  /* цвета разделов */
+  --s-read: #2446b5;
+  --s-read-soft: #e9eefc;
+  --s-math: #d35a12;
+  --s-math-ink: #a8470d;
+  --s-math-soft: #fdeee3;
+  --s-ai: #11795a;
+  --s-ai-ink: #0d6449;
+  --s-ai-soft: #e1f4ec;
+  --s-lesson: #6b5a2e;
+  --s-lesson-soft: #f5efdf;
   /* «верно» и «ошибка» */
   --s-mint: var(--color-mint);
   --s-ok: var(--color-ok);
@@ -32,10 +34,24 @@
   color: var(--s-ink);
   font-family: var(--font-sans);
 }
+:root[data-theme='dark'] .site {
+  --s-read: #8ea7ff; --s-read-soft: #1e2847;
+  --s-math: #ff9a5c; --s-math-ink: #ffb27a; --s-math-soft: #3a2414;
+  --s-ai: #4fd1a0; --s-ai-ink: #74ddb4; --s-ai-soft: #123528;
+  --s-lesson: #e0c98a; --s-lesson-soft: #332b17;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .site {
+    --s-read: #8ea7ff; --s-read-soft: #1e2847;
+    --s-math: #ff9a5c; --s-math-ink: #ffb27a; --s-math-soft: #3a2414;
+    --s-ai: #4fd1a0; --s-ai-ink: #74ddb4; --s-ai-soft: #123528;
+    --s-lesson: #e0c98a; --s-lesson-soft: #332b17;
+  }
+}
 
-/* Скругления: небольшие и одинаковые по смыслу — контролы 8px, листы 10px */
-.site :where(button, input, select, textarea, .bubble) { border-radius: 8px; }
-.site :where(article, figure, table, .site-tile) { border-radius: 10px; background: var(--s-card); }
+/* Скругления: контролы 10px, карточки 14px — мягко, но не «таблетки» */
+.site :where(button, input, select, textarea, .bubble) { border-radius: 10px; }
+.site :where(article, figure, table, .site-tile) { border-radius: 14px; background: var(--s-card); }
 .display { font-family: var(--font-sans); font-weight: 700; letter-spacing: -0.015em; line-height: 1.15; text-transform: none; }
 
 /* Боковая панель — как оглавление тетради */
@@ -53,8 +69,10 @@
 
 /* Кнопки: одна главная (синяя) на экран, остальные — контурные */
 .site-btn, .site .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 0 18px; border-radius: 8px !important; font-weight: 600; font-size: 16px; text-transform: none; letter-spacing: 0; border: 0; transition: background-color 0.15s, box-shadow 0.15s; }
-.site-btn--solid, .site .btn--primary, .site-btn--accent, .site-btn--math { background: var(--s-read); color: var(--color-on-brand); }
-.site-btn--solid:hover, .site .btn--primary:hover, .site-btn--accent:hover, .site-btn--math:hover { background: var(--color-brand-strong); }
+.site-btn--solid, .site .btn--primary { background: var(--s-read); color: var(--color-on-brand); }
+.site-btn--accent { background: var(--s-ai); color: var(--color-on-brand); }
+.site-btn--math { background: var(--s-math); color: var(--color-on-brand); }
+.site-btn--solid:hover, .site .btn--primary:hover, .site-btn--accent:hover, .site-btn--math:hover { filter: brightness(0.92); }
 .site-btn--ghost { background: var(--s-card); color: var(--s-ink); box-shadow: inset 0 0 0 1px var(--s-line); }
 .site-btn--ghost:hover { box-shadow: inset 0 0 0 1px var(--s-muted); }
 .site .btn:disabled, .site-btn:disabled { opacity: 0.45; }
@@ -74,9 +92,11 @@
 .app-head { display: grid; gap: 8px; max-width: 680px; }
 .app-title { font-size: clamp(26px, 2.6vw, 34px); font-weight: 700; letter-spacing: -0.015em; line-height: 1.15; }
 .app-sub { font-size: 17px; line-height: 1.55; color: var(--s-muted); }
-/* Пометки — обычный мелкий текст, без «таблеток» */
-.chip { display: inline-flex; align-self: flex-start; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; color: var(--s-muted); }
-.chip--read, .chip--math, .chip--ai { color: var(--s-muted); }
+/* Метка раздела: маленькая, в цвете раздела */
+.chip { display: inline-flex; align-self: flex-start; justify-self: start; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 6px; font-size: 13px; font-weight: 600; background: var(--s-soft); color: var(--s-muted); }
+.chip--read { background: var(--s-read-soft); color: var(--s-read); }
+.chip--math { background: var(--s-math-soft); color: var(--s-math-ink); }
+.chip--ai { background: var(--s-ai-soft); color: var(--s-ai-ink); }
 .muted-s { font-size: 14px; color: var(--s-muted); }
 .pill { min-height: 40px; padding: 0 12px; border-radius: 8px !important; background: var(--s-card); box-shadow: inset 0 0 0 1px var(--s-line); font-weight: 500; font-size: 14px; }
 .pill:hover { box-shadow: inset 0 0 0 1px var(--s-read); color: var(--s-read); }
@@ -108,23 +128,30 @@
 .tutor__bar:focus-within { border-color: var(--s-read); }
 .tutor__input { flex: 1; min-width: 0; min-height: 44px; padding: 0 10px; border: 0; background: transparent; font-size: 16px; color: var(--s-ink); outline: none; }
 
-/* Разделы на главной: строки оглавления, а не цветные плитки */
-.hub { display: grid; grid-template-columns: minmax(0, 1fr); border-top: 1px solid var(--s-line); max-width: 760px; }
-.hub__tile { position: relative; display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; grid-template-areas: 'icon title go' 'icon text go'; column-gap: 16px; row-gap: 2px; align-items: center; padding: 16px 4px; border-bottom: 1px solid var(--s-line); color: var(--s-ink); }
-.hub__tile:hover b { color: var(--s-read); }
-.hub__tile svg { grid-area: icon; width: 40px; height: 40px; padding: 9px; border-radius: 8px; background: var(--s-soft); color: var(--s-read); }
-.hub__tile b { grid-area: title; font-size: 18px; font-weight: 600; }
+/* Разделы на главной: одна яркая плитка (наставник) и светлые карточки с цветным значком раздела */
+.hub { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.hub__tile { --c: var(--s-read); --c-soft: var(--s-read-soft); position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); grid-template-areas: 'icon title' 'icon text' 'icon go'; column-gap: 14px; row-gap: 2px; align-content: start; padding: 18px; border-radius: 14px; background: var(--s-card); border: 1px solid var(--s-line); color: var(--s-ink); transition: border-color 0.15s; }
+.hub__tile:hover { border-color: var(--c); }
+.hub__tile svg { grid-area: icon; width: 44px; height: 44px; padding: 10px; border-radius: 10px; background: var(--c-soft); color: var(--c); }
+.hub__tile b { grid-area: title; font-size: 18px; font-weight: 650; }
 .hub__tile span { grid-area: text; font-size: 15px; color: var(--s-muted); }
-.hub__tile em { grid-area: go; font-style: normal; font-weight: 500; font-size: 15px; color: var(--s-read); white-space: nowrap; }
-/* Наставник по фото — главная возможность, поэтому строка с синим полем */
-.hub__tile--ai { padding-top: 20px; padding-bottom: 20px; }
-.hub__tile--ai svg { background: var(--s-read); color: var(--color-on-brand); }
-.hub__tile--ai b { font-size: 20px; }
+.hub__tile em { grid-area: go; margin-top: 8px; font-style: normal; font-weight: 600; font-size: 15px; color: var(--c); }
+.hub__tile--read { --c: var(--s-read); --c-soft: var(--s-read-soft); }
+.hub__tile--math { --c: var(--s-math); --c-soft: var(--s-math-soft); }
+.hub__tile--lesson { --c: var(--s-lesson); --c-soft: var(--s-lesson-soft); }
+/* Единственное яркое место: наставник по фото — главная возможность */
+.hub__tile--ai { grid-column: 1 / -1; padding: 22px; background: var(--s-ai); border: 0; color: #fff; }
+.hub__tile--ai:hover { filter: brightness(0.95); }
+.hub__tile--ai svg { width: 52px; height: 52px; padding: 12px; background: rgb(255 255 255 / 0.18); color: #fff; }
+.hub__tile--ai b { font-size: 22px; }
+.hub__tile--ai span { color: rgb(255 255 255 / 0.9); }
+.hub__tile--ai em { color: #fff; }
+:root[data-theme='dark'] .hub__tile--ai { background: #0f5c45; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .hub__tile--ai { background: #0f5c45; } }
 
-.stat-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; max-width: 760px; border: 1px solid var(--s-line); border-radius: 10px; background: var(--s-card); }
-.stat { padding: 14px 16px; }
-.stat + .stat { border-left: 1px solid var(--s-line); }
-.stat b { display: block; font-size: 24px; font-weight: 700; }
+.stat-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.stat { padding: 14px 16px; border-radius: 14px; background: var(--s-card); border: 1px solid var(--s-line); }
+.stat b { display: block; font-size: 26px; font-weight: 700; }
 .stat span { font-size: 14px; color: var(--s-muted); }
 
 /* Мобильная версия: нижняя панель как в приложении */
@@ -139,13 +166,13 @@
   .site-nav__short { display: block; }
   .site-screen, .app-screen { padding: 20px 16px 96px; }
   .bubble { max-width: 92%; }
-  .hub__tile { grid-template-columns: 40px minmax(0, 1fr); grid-template-areas: 'icon title' 'icon text' '. go'; }
-  .hub__tile em { margin-top: 6px; }
+  .hub { grid-template-columns: minmax(0, 1fr); }
   .stat-row { grid-template-columns: 1fr 1fr; }
-  .stat:nth-child(3) { border-left: 0; }
-  .stat:nth-child(n + 3) { border-top: 1px solid var(--s-line); }
 }
 @media (prefers-reduced-motion: reduce) {
   .bubble--typing i { animation: none; }
   .site-btn, .site .btn, .camera-btn { transition: none; }
 }
+
+/* Внутри маленьких карточек метка — просто цветной текст, без подложки, чтобы не переносилась */
+.site-tile .chip { padding: 0; background: none; font-size: 12px; }
