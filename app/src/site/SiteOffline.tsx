@@ -10,6 +10,7 @@ import { useOnline } from '../teacher/hooks';
 import { MATH } from './content/math';
 import { TEXTS } from './content/texts';
 import { useProgress } from './progress';
+import { OfflineProof } from './OfflineProof';
 
 const NETS = [
   { id: '2g', label: '2G (EDGE)', kbps: 100 },
@@ -97,6 +98,8 @@ export default function SiteOffline() {
           {online ? 'Сейчас онлайн. Выключите Wi-Fi — всё продолжит работать' : 'Офлайн: вы читаете это без интернета'}
         </span>
       </div>
+
+      <OfflineProof />
 
       <div className="mt-8 grid flex-1 gap-8 lg:grid-cols-2">
         <div className="grid content-start gap-5">

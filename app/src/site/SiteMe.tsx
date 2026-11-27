@@ -11,6 +11,8 @@ import { TEXTS } from './content/texts';
 import { PLAYABLE } from './SiteTrain';
 import { resetProgress, useProgress } from './progress';
 import { getAi, pingOllama, setAi, type AiMode, type AiSettings } from './ai';
+import { Badges } from './Badges';
+import { useStreak } from './streak';
 
 type InstallEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
 declare global {
@@ -32,6 +34,7 @@ const KIND = { reading: 'Чтение', math: 'Математика', text: 'Т�
 
 export default function SiteMe() {
   const progress = useProgress();
+  const streak = useStreak();
   const reading = progress.filter((a) => a.kind === 'reading');
   const math = progress.filter((a) => a.kind === 'math');
   const skills = computeSkills(reading, meta);
@@ -87,6 +90,8 @@ export default function SiteMe() {
           </div>
         ))}
       </dl>
+
+      <Badges progress={progress} streak={streak} />
 
       <div className="mt-8 grid flex-1 gap-8 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="grid content-start gap-6">

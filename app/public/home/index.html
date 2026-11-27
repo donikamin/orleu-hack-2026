@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Oqy: ИИ-тренажёр чтения для 7–9 классов</title>
+<title>Oqy: ИИ-тренажёр чтения и математики для 7–9 классов</title>
 <meta name="description" content="Задания на три навыка PISA, подсказки вместо готовых ответов и карта класса для учителя. Работает в сельской школе без интернета.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Oqy: ИИ-тренажёр чтения для 7–9 классов">
+<meta property="og:title" content="Oqy: ИИ-тренажёр чтения и математики для 7–9 классов">
 <meta property="og:description" content="Подсказки вместо готовых ответов. Результаты учителю через QR-код, без интернета.">
 <meta property="og:image" content="share.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -27,14 +27,15 @@
 <!-- deal: palette white-mint-tiles (start.mjs); type: manrope — третья пара раздачи, потому что у Funnel и Host Grotesk нет кириллицы -->
 <style>
 :root {
-  --p-bg: #ffffff; --p-surface: #f3f3f3; --p-ink: #232323; --p-muted: #525252;
-  --p-accent: #a1ffcb; --p-accent-ink: #232323; --p-action: #232323; --p-action-ink: #ffffff;
-  --p-inv-bg: #232323; --p-inv-surface: #303030; --p-inv-ink: #ffffff; --p-inv-muted: #a4a4a4;
-  --p-inv-accent: #a1ffcb; --p-inv-accent-ink: #232323; --p-inv-action: #a1ffcb; --p-inv-action-ink: #232323;
+  /* ярче: цвета приложения Oqy — зелёный (действие), солнечный жёлтый (акцент), глубокий синий (тёмные блоки) */
+  --p-bg: #ffffff; --p-surface: #eef5ff; --p-ink: #14213d; --p-muted: #4a5878;
+  --p-accent: #ffcf3f; --p-accent-ink: #2a1d00; --p-action: #12b76a; --p-action-ink: #ffffff;
+  --p-inv-bg: #0f3a8c; --p-inv-surface: #1a4aa6; --p-inv-ink: #ffffff; --p-inv-muted: #c8d6f5;
+  --p-inv-accent: #ffcf3f; --p-inv-accent-ink: #2a1d00; --p-inv-action: #ffcf3f; --p-inv-action-ink: #2a1d00;
   --font-display: "Manrope", system-ui, sans-serif;
   --font-text: "Manrope", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
-  --display-weight: 500;
+  --display-weight: 700;
   --display-tracking: -0.035em;
   --display-tracking-xl: -0.045em;
   --ly-scale: 0.98;
@@ -128,7 +129,21 @@
   /* page CSS: только то, что внутри визуалов */
   .shot { display: block; width: 100%; height: 100%; object-fit: cover; object-position: left top; }
   #teacher .panel { --p-h: 190px; }
-      @media (max-width: 639px) { #teacher .panel { --p-h: 200px; } </style>
+      @media (max-width: 639px) { #teacher .panel { --p-h: 200px; } }
+      /* Тур по приложению: живые скриншоты экранов (страничный CSS) */
+      .app-tour { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .app-tour__card { display: grid; align-content: start; gap: 14px; padding: 18px 18px 0; overflow: hidden; border-radius: 22px; background: var(--surface, #fff); border: 1px solid color-mix(in srgb, currentColor 12%, transparent); color: inherit; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
+      .app-tour__card:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -24px rgb(0 0 0 / .35); }
+      .app-tour__card--wide { grid-column: 1 / -1; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); align-items: end; padding: 24px 24px 0; }
+      .app-tour__text { display: grid; gap: 6px; }
+      .app-tour__text b { font-size: 20px; line-height: 1.2; }
+      .app-tour__text span { opacity: .75; }
+      .app-tour__card--wide .app-tour__text { align-self: center; padding-bottom: 24px; }
+      .app-tour__card--wide .app-tour__text b { font-size: 28px; }
+      .app-tour img { display: block; width: 100%; height: auto; border-radius: 12px 12px 0 0; box-shadow: 0 -1px 0 color-mix(in srgb, currentColor 8%, transparent), 0 10px 30px -18px rgb(0 0 0 / .45); transition: transform .35s ease; }
+      .app-tour__card:hover img { transform: scale(1.02); }
+      @media (max-width: 767px) { .app-tour { grid-template-columns: 1fr; } .app-tour__card--wide { grid-template-columns: 1fr; } }
+      @media (prefers-reduced-motion: reduce) { .app-tour__card, .app-tour img { transition: none; } }</style>
 </head>
 <body>
 <!-- type: software
@@ -140,6 +155,7 @@
     <a class="nav__logo" href="#top" translate="no"><span class="mark mark--initial" aria-hidden="true">O</span>Oqy</a>
     <nav class="nav__links" aria-label="Главное">
       <div class="nav__item"><a class="nav__link" href="#case">Кейс</a></div>
+      <div class="nav__item"><a class="nav__link" href="#app">Приложение</a></div>
       <div class="nav__item"><a class="nav__link" href="#how">Как работает</a></div>
       <div class="nav__item"><a class="nav__link" href="#try">Попробовать</a></div>
       <div class="nav__item"><a class="nav__link" href="#demo">Демо</a></div>
@@ -158,9 +174,9 @@
     <div class="wrap"><div class="hero-text">
       <div class="hero__c">
         <a class="pill" href="#how"><span>Работает в режиме самолёта</span><span class="muted">Как это устроено</span></a>
-        <h1 id="hero-h" aria-label="ИИ-тренажёр чтения для 7–9 классов">ИИ-тренажёр чтения для 7–9 классов</h1>
-        <p class="hero__lead">Двое из трёх 15-летних в Казахстане не находят нужное в тексте средней сложности. Oqy тренирует чтение по рамке PISA и работает без интернета.</p>
-        <div class="btn-row"><a class="btn btn--primary" href="/demo">Открыть демо-класс<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a><a class="btn btn--secondary" href="#try">Решить задание</a></div>
+        <h1 id="hero-h" aria-label="ИИ-тренажёр чтения и математики для 7–9 классов">ИИ-тренажёр чтения и математики для 7–9 классов</h1>
+        <p class="hero__lead">Двое из трёх 15-летних в Казахстане не находят нужное в тексте средней сложности. Oqy тренирует чтение и математику по рамке PISA, отвечает голосом 3D-собеседника и работает без интернета.</p>
+        <div class="btn-row"><a class="btn btn--primary" href="/">Открыть приложение<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a><a class="btn btn--secondary" href="/jury">Демо для жюри за 3 минуты</a></div>
       </div>
       <div class="hero__window" data-fx="painterly-landscape" data-fx-seed="7" role="img" aria-label="Oqy даёт ученику подсказку к заданию про расписание автобуса, не раскрывая ответ">
         <div class="ly-piece d-win d-win--dark" aria-hidden="true">
@@ -239,6 +255,34 @@
             <div class="trainer__skill"><span>Навык «Найти»</span><span class="trainer__meter"><i data-meter style="width:40%"></i></span><b data-level>2/5</b></div>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="app" style="--h: 2" aria-labelledby="app-h">
+    <div class="wrap">
+      <div class="section-head"><h2 id="app-h">Внутри приложения: ИИ-ответчик, серия, мини-тест</h2><p>Ученик открывает Oqy с телефона. Всё ниже работает в режиме самолёта, а ИИ подключается, когда есть сеть.</p></div>
+      <div class="app-tour">
+        <a class="app-tour__card app-tour__card--wide" href="/tutor">
+          <span class="app-tour__text"><b>3D-собеседник отвечает голосом</b><span>Спроси вслух, сфоткай задачу или дай текст: он прочитает его и ответит, губы двигаются в такт. Без сервера отвечает из встроенной базы.</span></span>
+          <img src="/home/assets/app/app-answerer.png" width="1360" height="860" alt="Экран ИИ-ответчика: 3D-собеседник читает текст «Море, которое ушло»" loading="lazy" decoding="async">
+        </a>
+        <a class="app-tour__card" href="/">
+          <span class="app-tour__text"><b>Главная: задача дня и всё под рукой</b><span>Одна задача дня на весь класс и +20 XP за неё. В каждой плитке видно, что внутри.</span></span>
+          <img src="/home/assets/app/app-home.png" width="1360" height="860" alt="Главная Oqy: задача дня, ИИ-ответчик, математика, чтение, серия" loading="lazy" decoding="async">
+        </a>
+        <a class="app-tour__card" href="/streak">
+          <span class="app-tour__text"><b>Серия дней и заморозки</b><span>Огонь растёт, если решать хотя бы одно задание в день. Пропустил — заморозка спасёт серию.</span></span>
+          <img src="/home/assets/app/app-streak.png" width="1360" height="860" alt="Экран серии: календарь месяца, заморозки, цель дня" loading="lazy" decoding="async">
+        </a>
+        <a class="app-tour__card" href="/quiz">
+          <span class="app-tour__text"><b>Мини-тест PISA за 10 минут</b><span>8 вопросов вперемешку: найти, понять, оценить и математика. В конце уровень по каждому навыку.</span></span>
+          <img src="/home/assets/app/app-quiz.png" width="1360" height="860" alt="Начало мини-теста PISA: 8 вопросов, 10 минут" loading="lazy" decoding="async">
+        </a>
+        <a class="app-tour__card" href="/math">
+          <span class="app-tour__text"><b>30 задач по математике из жизни</b><span>Рассрочка, тарифы, обменник, ремонт, графики. Ответ числом, три подсказки, разбор.</span></span>
+          <img src="/home/assets/app/app-math.png" width="1360" height="860" alt="Список задач по математике в Oqy" loading="lazy" decoding="async">
+        </a>
       </div>
     </div>
   </section>
