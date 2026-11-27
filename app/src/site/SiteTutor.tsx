@@ -3,7 +3,7 @@
 // текст из учебника — он его прочитает. Камера — фото задачи прямо в приложении (сжимается до ~50 КБ, уходит на 2G).
 // Задачи не решает за ученика (сократический диалог), вопросы о тексте и понятиях объясняет прямо.
 // Нет сервера ИИ — отвечает из встроенной базы; нет сети — фото ждёт в очереди.
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { TEXTS } from './content/texts';
 import { ICam, IMic, ISpeaker } from './Icons';
@@ -18,7 +18,14 @@ import { askOllama } from './ai';
 import { LocalAiCard } from './LocalAiCard';
 import { CameraCapture } from './CameraCapture';
 
-const TalkingAvatar = lazy(() => import('./TalkingAvatar'));
+// 3D-модуль ещё ни разу не скачивался, а сети нет — экран не должен падать: отвечаем голосом телефона и текстом
+const NoAvatar = forwardRef<AvatarHandle, { onState: (s: AvatarState) => void }>(function NoAvatar({ onState }, _ref) {
+  useEffect(() => onState({ phase: 'error', message: '3D-ответчик загрузится, когда появится интернет. Пока отвечаю голосом телефона и текстом.' }), [onState]);
+  return null;
+});
+const TalkingAvatar = lazy(() =>
+  import('./TalkingAvatar').catch(() => ({ default: NoAvatar as unknown as typeof import('./TalkingAvatar').default })),
+);
 
 type Msg =
   | { role: 'student'; text: string; photo?: string; voice?: boolean }

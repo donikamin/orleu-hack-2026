@@ -93,7 +93,7 @@ export default function LessonPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <article className="rounded-[var(--radius-card)] border border-line bg-surface p-6 shadow-[var(--shadow-card)] sm:p-10" aria-live="polite">
           <p className="text-sm font-semibold uppercase tracking-wider text-accent">
             {SKILL_LABEL[task.skill]} · сложность {task.difficulty}

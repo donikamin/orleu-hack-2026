@@ -37,7 +37,7 @@ export default function AssignPage() {
   if (!all.length) return <EmptyState title="Нет заданий">Добавьте задания через «Фото → задания».</EmptyState>;
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">
       <Card>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-bold">Выберите задания</h2>

@@ -49,7 +49,7 @@ export default function TeacherHome() {
     <>
       <PageHeader title="Панель учителя" subtitle="Классы хранятся на этом устройстве и работают без интернета." />
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
         <section aria-labelledby="classes-h">
           <h2 id="classes-h" className="mb-3 text-lg font-bold">
             Мои классы

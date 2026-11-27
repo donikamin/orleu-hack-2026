@@ -324,6 +324,13 @@ let onProgress: ((s: string) => void) | null = null;
 function getSttWorker() {
   if (sttWorker) return sttWorker;
   sttWorker = new Worker(new URL('./stt.worker.ts', import.meta.url), { type: 'module' });
+  // файл распознавания не скачан, а сети нет — не висим на «Распознаю…»
+  sttWorker.onerror = () => {
+    const err = new Error('Распознаванию на устройстве нужен интернет один раз. Подключись к Wi-Fi или напиши вопрос текстом');
+    sttWait.forEach((w) => w.reject(err));
+    sttWait.clear();
+    sttWorker = null;
+  };
   sttWorker.onmessage = (e: MessageEvent) => {
     const m = e.data as { type: string; id?: number; text?: string; message?: string; progress?: number; mb?: number };
     if (m.type === 'progress') onProgress?.(`Скачиваю распознавание речи на устройство (один раз, ${m.mb || 75} МБ): ${Math.round((m.progress ?? 0) * 100)}%`);

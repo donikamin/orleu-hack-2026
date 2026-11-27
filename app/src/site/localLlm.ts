@@ -73,6 +73,15 @@ const fullId = (k: ModelKey) => `${MODELS[k].id}-${f16 ? 'q4f16_1' : 'q4f32_1'}-
 function getWorker() {
   if (worker) return worker;
   worker = new Worker(new URL('./llm.worker.ts', import.meta.url), { type: 'module' });
+  worker.onerror = () => {
+    const err = new Error('Локальному ИИ нужен интернет один раз, чтобы скачаться. Подключись к Wi-Fi');
+    waiters.forEach((w) => w.reject(err));
+    waiters.clear();
+    readyWait?.reject(err);
+    readyWait = null;
+    worker = null;
+    set({ phase: state.gpu ? 'idle' : state.phase });
+  };
   worker.onmessage = (e: MessageEvent) => {
     const m = e.data as { type: string; [k: string]: unknown };
     if (m.type === 'cached') {
