@@ -50,6 +50,10 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // новая версия сразу берёт управление, старые кэши удаляются — у всех открывается свежая версия
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,html,svg,json,woff2,png}'],
         // лендинг /home/ — отдельный сайт со своими ассетами, в офлайн-кэш приложения он не нужен
         // 3D-ответчик (three.js + модель ~3 МБ) не качается заранее: только когда ученик откроет экран, потом лежит в кэше
