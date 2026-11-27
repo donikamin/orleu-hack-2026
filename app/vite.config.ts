@@ -38,7 +38,7 @@ export default defineConfig({
         orientation: 'any',
         categories: ['education'],
         lang: 'ru',
-        theme_color: '#0a0a0a',
+        theme_color: '#2446b5',
         background_color: '#ffffff',
         display: 'standalone',
         start_url: '/',

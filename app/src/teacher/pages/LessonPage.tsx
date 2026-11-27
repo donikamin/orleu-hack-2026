@@ -95,7 +95,7 @@ export default function LessonPage() {
 
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
         <article className="rounded-[var(--radius-card)] border border-line bg-surface p-6 shadow-[var(--shadow-card)] sm:p-10" aria-live="polite">
-          <p className="text-sm font-semibold uppercase tracking-wider text-accent">
+          <p className="text-sm font-semibold text-accent">
             {SKILL_LABEL[task.skill]} · сложность {task.difficulty}
           </p>
           <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">{task.title}</h1>

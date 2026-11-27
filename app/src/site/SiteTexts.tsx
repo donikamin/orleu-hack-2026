@@ -18,7 +18,7 @@ function Library() {
   return (
     <section className="site-screen" aria-labelledby="texts-h">
       <p className="site-kicker">Тексты</p>
-      <h1 id="texts-h" className="display mt-4 text-[clamp(44px,5.2vw,84px)]">
+      <h1 id="texts-h" className="display mt-4 text-[clamp(26px,2.6vw,34px)]">
         Слушай.
         <br />
         Читай. Отвечай.
@@ -34,7 +34,7 @@ function Library() {
                 <span className="site-kicker !text-current opacity-70">{t.genre}</span>
                 <span>{done.has(t.id) ? '✓ прочитан' : `${t.minutes} мин`}</span>
               </span>
-              <span className="display text-[clamp(32px,3vw,44px)]">{t.title}</span>
+              <span className="display text-[clamp(26px,2.6vw,34px)]">{t.title}</span>
               <span className="text-sm opacity-80">{t.paragraphs[0].slice(0, 90)}…</span>
             </Link>
           </li>
@@ -69,7 +69,7 @@ function Reader({ text }: { text: ReadingText }) {
       </div>
       <div className="mt-4 grid flex-1 items-start gap-10 lg:grid-cols-[1.15fr_0.85fr]">
         <article>
-          <h1 id="reader-h" className="display text-[clamp(40px,4.4vw,72px)]">{text.title}</h1>
+          <h1 id="reader-h" className="display text-[clamp(26px,2.6vw,34px)]">{text.title}</h1>
           {sp.supported ? (
             <div className="sticky top-0 z-10 mt-6 flex flex-wrap items-center gap-3 border-y border-[var(--s-line)] bg-[var(--s-bg)] py-3">
               <button type="button" onClick={sp.toggle} className="site-btn site-btn--solid !min-h-12">
@@ -112,7 +112,7 @@ function Reader({ text }: { text: ReadingText }) {
                         tabIndex={sp.supported ? 0 : undefined}
                         onClick={() => sp.supported && sp.playFrom(i)}
                         onKeyDown={(e) => e.key === 'Enter' && sp.playFrom(i)}
-                        className={`cursor-pointer transition-colors duration-200 ${on ? 'bg-[var(--s-mint)] text-[#0a0a0a]' : 'hover:bg-[var(--s-soft)]'}`}
+                        className={`cursor-pointer transition-colors duration-200 ${on ? 'bg-[var(--s-mint)] text-[var(--s-ink)]' : 'hover:bg-[var(--s-soft)]'}`}
                       >
                         {s}
                       </span>{' '}
@@ -130,7 +130,7 @@ function Reader({ text }: { text: ReadingText }) {
             const picked = answers[qi];
             const ok = picked === q.correct;
             return (
-              <div key={qi} className="border-t-2 border-[var(--s-ink)] pt-4">
+              <div key={qi} className="border-t-2 border-[var(--s-read)] pt-4">
                 <p className="site-kicker">Вопрос {qi + 1} · {SKILL_LABEL[q.skill]}</p>
                 <p className="mt-1 text-lg font-semibold">{q.q}</p>
                 <div className="mt-3 grid gap-2">
@@ -142,14 +142,14 @@ function Reader({ text }: { text: ReadingText }) {
                         type="button"
                         disabled={ok}
                         onClick={() => answer(qi, oi)}
-                        className={`min-h-11 border-2 px-3 py-2 text-left transition-colors ${isPicked && ok ? 'border-[#0a0a0a] bg-[var(--s-mint)] text-[#0a0a0a]' : isPicked ? 'border-[#c2410c] text-[#c2410c]' : 'border-[var(--s-line)] enabled:hover:border-[var(--s-ink)]'}`}
+                        className={`min-h-11 border-2 px-3 py-2 text-left transition-colors ${isPicked && ok ? 'border-[var(--s-ok)] bg-[var(--s-mint)] text-[var(--s-ink)]' : isPicked ? 'border-[var(--s-warn)] text-[var(--s-warn)]' : 'border-[var(--s-line)] enabled:hover:border-[var(--s-read)]'}`}
                       >
                         {o}
                       </button>
                     );
                   })}
                 </div>
-                {picked !== null && !ok && <p className="mt-2 border-l-4 border-[#c2410c] bg-[var(--s-soft)] p-3 text-sm" aria-live="polite"><b>Подсказка.</b> {q.hint}</p>}
+                {picked !== null && !ok && <p className="mt-2 border-l-2 border-[var(--s-read)] bg-[var(--s-read-soft)] p-3 text-sm" aria-live="polite"><b>Подсказка.</b> {q.hint}</p>}
               </div>
             );
           })}

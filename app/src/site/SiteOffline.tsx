@@ -88,12 +88,12 @@ export default function SiteOffline() {
     <section className="site-screen" aria-labelledby="off-h">
       <p className="site-kicker">2G и QR</p>
       <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
-        <h1 id="off-h" className="display text-[clamp(44px,5.2vw,84px)]">
+        <h1 id="off-h" className="display text-[clamp(26px,2.6vw,34px)]">
           Интернет —
           <br />
           один раз.
         </h1>
-        <span className={`px-3 py-1.5 font-['Oswald'] text-sm font-semibold uppercase tracking-wider ${online ? 'bg-[var(--s-soft)]' : 'bg-[var(--s-mint)] text-[#0a0a0a]'}`} role="status">
+        <span className={`px-3 py-1.5 text-sm font-semibold ${online ? 'bg-[var(--s-soft)]' : 'bg-[var(--s-mint)] text-[var(--s-ink)]'}`} role="status">
           {online ? 'Сейчас онлайн. Выключите Wi-Fi — всё продолжит работать' : 'Офлайн: вы читаете это без интернета'}
         </span>
       </div>
@@ -102,20 +102,20 @@ export default function SiteOffline() {
         <div className="grid content-start gap-5">
           <h2 className="text-xl font-semibold">Сколько весит Oqy</h2>
           <dl className="grid grid-cols-3 gap-4 border-y border-[var(--s-line)] py-5">
-            <div><dt className="text-sm text-[var(--s-muted)]">Приложение</dt><dd className="display text-4xl">{kb(appBytes)}</dd></div>
-            <div><dt className="text-sm text-[var(--s-muted)]">Все задания и тексты</dt><dd className="display text-4xl">{kb(contentBytes)}</dd></div>
-            <div><dt className="text-sm text-[var(--s-muted)]">После загрузки</dt><dd className="display text-4xl">0 КБ</dd></div>
+            <div><dt className="text-sm text-[var(--s-muted)]">Приложение</dt><dd className="display text-3xl">{kb(appBytes)}</dd></div>
+            <div><dt className="text-sm text-[var(--s-muted)]">Все задания и тексты</dt><dd className="display text-3xl">{kb(contentBytes)}</dd></div>
+            <div><dt className="text-sm text-[var(--s-muted)]">После загрузки</dt><dd className="display text-3xl">0 КБ</dd></div>
           </dl>
           <div role="group" aria-label="Скорость сети" className="flex gap-1">
             {NETS.map((n) => (
-              <button key={n.id} type="button" aria-pressed={net === n.id} onClick={() => { setNet(n.id); setRun((r) => r + 1); }} className={`min-h-11 flex-1 font-['Oswald'] font-semibold uppercase tracking-wider ${net === n.id ? 'bg-[var(--s-ink)] text-[var(--s-bg)]' : 'bg-[var(--s-soft)]'}`}>
+              <button key={n.id} type="button" aria-pressed={net === n.id} onClick={() => { setNet(n.id); setRun((r) => r + 1); }} className={`min-h-11 flex-1 font-semibold ${net === n.id ? 'bg-[var(--s-read)] text-[var(--color-on-brand)]' : 'bg-[var(--s-soft)]'}`}>
                 {n.label}
               </button>
             ))}
           </div>
           <div>
             <div className="h-4 bg-[var(--s-soft)]">
-              <div key={`${net}-${run}`} className="h-full bg-[var(--s-ink)]" style={{ animation: `bar ${Math.min(seconds, 12)}s linear both`, transformOrigin: 'left' }} />
+              <div key={`${net}-${run}`} className="h-full bg-[var(--s-read)]" style={{ animation: `bar ${Math.min(seconds, 12)}s linear both`, transformOrigin: 'left' }} />
             </div>
             <p className="mt-2 text-lg">
               Первая загрузка на {speed.label}: <b>≈ {seconds < 1 ? 'меньше секунды' : `${Math.round(seconds)} с`}</b>. Дальше задания, проверка и подсказки работают в режиме самолёта.

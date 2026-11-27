@@ -23,7 +23,7 @@ function List() {
     <section className="site-screen" aria-labelledby="lessons-h">
       <p className="site-kicker">Уроки</p>
       <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
-        <h1 id="lessons-h" className="display text-[clamp(44px,5.2vw,84px)]">
+        <h1 id="lessons-h" className="display text-[clamp(26px,2.6vw,34px)]">
           5 минут —
           <br />
           один навык.
@@ -39,8 +39,8 @@ function List() {
             <ol className="mt-3 grid gap-2">
               {g.items.map((l, i) => (
                 <li key={l.id}>
-                  <Link to={`/lessons/${l.id}`} className="site-tile !flex-row items-center gap-5 border border-[var(--s-line)] !bg-[var(--s-bg)] p-5 hover:border-[var(--s-ink)]">
-                    <span className={`display grid h-14 w-14 shrink-0 place-items-center text-2xl ${done.has(l.id) ? 'bg-[var(--s-mint)] text-[#0a0a0a]' : 'bg-[var(--s-soft)]'}`}>{done.has(l.id) ? '✓' : i + 1}</span>
+                  <Link to={`/lessons/${l.id}`} className="site-tile !flex-row items-center gap-5 border border-[var(--s-line)] !bg-[var(--s-bg)] p-5 hover:border-[var(--s-read)]">
+                    <span className={`display grid h-14 w-14 shrink-0 place-items-center text-2xl ${done.has(l.id) ? 'bg-[var(--s-mint)] text-[var(--s-ink)]' : 'bg-[var(--s-soft)]'}`}>{done.has(l.id) ? '✓' : i + 1}</span>
                     <span className="min-w-0 flex-1">
                       <span className="block text-lg font-semibold">{l.title}</span>
                       <span className="block text-sm text-[var(--s-muted)]">{l.goal} · {l.steps.length} шагов · {l.minutes} мин</span>
@@ -81,7 +81,7 @@ function Player({ lesson }: { lesson: Lesson }) {
     return (
       <section className="site-screen" aria-labelledby="done-h">
         <p className="site-kicker">{lesson.goal}</p>
-        <h1 id="done-h" className="display mt-4 text-[clamp(48px,6vw,96px)]">Урок пройден.</h1>
+        <h1 id="done-h" className="display mt-4 text-[clamp(26px,2.6vw,34px)]">Урок пройден.</h1>
         <p className="mt-4 text-xl text-[var(--s-muted)]">{mistakes ? `Ошибок по ходу: ${mistakes}. Каждую вы разобрали.` : 'Без единой ошибки.'} Теперь закрепите на заданиях.</p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link to={lesson.practice} className="site-btn site-btn--solid">Практика по навыку →</Link>
@@ -99,7 +99,7 @@ function Player({ lesson }: { lesson: Lesson }) {
       <div className="mt-3 flex gap-1" aria-hidden="true">
         {lesson.steps.map((_, k) => <span key={k} className={`h-1.5 flex-1 ${k <= i ? 'bg-[var(--s-ink)]' : 'bg-[var(--s-line)]'}`} />)}
       </div>
-      <h1 id="lesson-h" className="display mt-6 text-[clamp(36px,4vw,64px)]">{lesson.title}</h1>
+      <h1 id="lesson-h" className="display mt-6 text-[clamp(26px,2.6vw,34px)]">{lesson.title}</h1>
 
       <div key={i} className="mt-6 grid max-w-4xl flex-1 content-start gap-5 animate-rise">
         {step.type === 'explain' && (
@@ -111,7 +111,7 @@ function Player({ lesson }: { lesson: Lesson }) {
         {step.type === 'example' && (
           <>
             <h2 className="text-2xl font-semibold">{step.title}</h2>
-            <p className="text-read border-l-4 border-[var(--s-ink)] bg-[var(--s-soft)] p-5 !text-xl">{step.doc}</p>
+            <p className="text-read !text-xl">{step.doc}</p>
             <p className="text-xl">{step.body}</p>
           </>
         )}
@@ -138,7 +138,7 @@ function Player({ lesson }: { lesson: Lesson }) {
                       setPicked(k);
                       if (!o.correct) setMistakes((m) => m + 1);
                     }}
-                    className={`min-h-14 border-2 p-4 text-left text-lg transition-colors ${on && o.correct ? 'border-[#0a0a0a] bg-[var(--s-mint)] text-[#0a0a0a]' : on ? 'border-[#c2410c]' : 'border-[var(--s-line)] enabled:hover:border-[var(--s-ink)]'}`}
+                    className={`min-h-14 border-2 p-4 text-left text-lg transition-colors ${on && o.correct ? 'border-[var(--s-ok)] bg-[var(--s-mint)] text-[var(--s-ink)]' : on ? 'border-[var(--s-warn)]' : 'border-[var(--s-line)] enabled:hover:border-[var(--s-read)]'}`}
                   >
                     {o.text}
                   </button>
@@ -146,7 +146,7 @@ function Player({ lesson }: { lesson: Lesson }) {
               })}
             </div>
             {picked !== null && (
-              <p key={picked} aria-live="polite" className={`animate-rise border-l-4 p-4 text-lg ${step.options[picked].correct ? 'border-[#0a0a0a] bg-[var(--s-mint)] text-[#0a0a0a]' : 'border-[#c2410c] bg-[var(--s-soft)]'}`}>
+              <p key={picked} aria-live="polite" className={`animate-rise border-l-4 p-4 text-lg ${step.options[picked].correct ? 'border-[var(--s-ok)] bg-[var(--s-mint)] text-[var(--s-ink)]' : 'border-[var(--s-warn)] bg-[var(--s-soft)]'}`}>
                 {!step.options[picked].correct && <b>Почему нет: </b>}
                 {step.options[picked].feedback}
                 {!step.options[picked].correct && ' Попробуйте другой вариант.'}

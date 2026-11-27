@@ -107,7 +107,7 @@ export function Speak({ text, lang, compact }: { text: string; lang: 'ru' | 'kk'
       type="button"
       onClick={sp.toggle}
       aria-label={sp.state === 'playing' ? 'Пауза' : 'Слушать текст'}
-      className={`inline-flex min-h-11 shrink-0 items-center gap-2 border border-[var(--s-line)] px-3 text-sm font-semibold hover:border-[var(--s-ink)] ${compact ? '' : 'px-4'}`}
+      className={`inline-flex min-h-11 shrink-0 items-center gap-2 border border-[var(--s-line)] px-3 text-sm font-semibold hover:border-[var(--s-read)] ${compact ? '' : 'px-4'}`}
     >
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         {sp.state === 'playing' ? <path d="M6 5h4v14H6zM14 5h4v14h-4z" /> : <path d="M7 4v16l13-8z" />}

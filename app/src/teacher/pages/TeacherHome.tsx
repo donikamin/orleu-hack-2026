@@ -76,7 +76,7 @@ export default function TeacherHome() {
                     {c.grade} класс · {c.size} учеников · {counts?.get(c.code) ?? 0} попыток
                   </p>
                   <p className="mt-3 font-mono text-sm">
-                    Код класса: <span className="font-bold tracking-widest">{c.code}</span>
+                    Код класса: <span className="font-bold">{c.code}</span>
                   </p>
                 </Link>
               </li>

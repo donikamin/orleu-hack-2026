@@ -89,7 +89,7 @@ export default function ClassLayout() {
           <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{cls.name}</h1>
           <p className="mt-1 flex flex-wrap items-center gap-2 text-muted">
             <span>
-              Код класса <span className="font-mono font-bold tracking-widest text-ink">{cls.code}</span>
+              Код класса <span className="font-mono font-bold text-ink">{cls.code}</span>
             </span>
             <span aria-hidden>·</span>
             <span>{ctx.attempts.length} попыток</span>
@@ -111,7 +111,7 @@ export default function ClassLayout() {
           <div className="flex min-w-max gap-6 lg:sticky lg:top-20 lg:min-w-0 lg:flex-col lg:gap-5">
             {GROUPS.map((g) => (
               <div key={g.title}>
-                <p className="mb-1 px-3 text-xs font-bold uppercase tracking-wider text-muted">{g.title}</p>
+                <p className="mb-1 px-3 text-xs font-bold text-muted">{g.title}</p>
                 <ul className="flex gap-1 lg:flex-col">
                   {g.items.map((t) => (
                     <li key={t.to}>

@@ -15,7 +15,7 @@ export default function SiteTools() {
     <section className="site-screen" aria-labelledby="tools-h">
       <p className="site-kicker">Для учителя</p>
       <div className="mt-6 flex flex-wrap items-end justify-between gap-6">
-        <h1 id="tools-h" className="display text-[clamp(44px,5.2vw,84px)]">
+        <h1 id="tools-h" className="display text-[clamp(26px,2.6vw,34px)]">
           Один класс.
           <br />
           Пять инструментов.

@@ -39,7 +39,7 @@ export default function DemoStudentQr() {
       <div className="grid gap-6 md:grid-cols-[320px_1fr]">
         <Card className="space-y-4">
           <Field label="Код класса">
-            <input name="classCode" autoComplete="off" spellCheck={false} className={`${inputClass} font-mono uppercase`} value={classCode} onChange={(e) => setClassCode(e.target.value)} />
+            <input name="classCode" autoComplete="off" spellCheck={false} className={`${inputClass} font-mono`} value={classCode} onChange={(e) => setClassCode(e.target.value)} />
           </Field>
           <Field label="Номер ученика">
             <input name="number" inputMode="numeric" autoComplete="off" className={inputClass} type="number" min={1} max={40} value={number} onChange={(e) => setNumber(Math.max(1, Number(e.target.value) || 1))} />
