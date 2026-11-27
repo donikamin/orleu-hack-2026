@@ -9,6 +9,9 @@ import SiteHome from './site/SiteHome';
 // Экраны лендинга-приложения: каждый — отдельный экран без длинной прокрутки
 const SiteCase = lazy(() => import('./site/SiteCase'));
 const SiteTrain = lazy(() => import('./site/SiteTrain'));
+const SiteStreak = lazy(() => import('./site/SiteStreak'));
+const SiteQuiz = lazy(() => import('./site/SiteQuiz'));
+const SiteBlitz = lazy(() => import('./site/SiteBlitz'));
 const SiteTask = lazy(() => import('./site/SiteTask'));
 const SiteTexts = lazy(() => import('./site/SiteTexts'));
 const SiteOffline = lazy(() => import('./site/SiteOffline'));
@@ -98,6 +101,10 @@ export default function App() {
         <Route path="math" element={<SiteTrain />} />
         <Route path="try" element={<Navigate to="/train" replace />} />
         <Route path="how" element={<Navigate to="/offline" replace />} />
+        <Route path="streak" element={<SiteStreak />} />
+        <Route path="quiz" element={<SiteQuiz />} />
+        <Route path="blitz" element={<SiteBlitz />} />
+        <Route path="jury" element={<SiteCase />} />
         <Route path="tools" element={<SiteTools />} />
       </Route>
       <Route element={<AppLayout />}>

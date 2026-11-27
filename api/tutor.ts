@@ -1,6 +1,6 @@
 // POST /api/tutor — ИИ-наставник по фото задачи или вопросу (идея OpenMath / MathBot):
 // не решает за ученика, а ведёт наводящими вопросами шаг за шагом.
-// Тело: { imageBase64?: string, messages: [{ role: 'student' | 'tutor', text }] }
+// Тело: { imageBase64?: string, context?: string (текст, который читает ученик), messages: [{ role: 'student' | 'tutor', text }] }
 // Фото сжимается на телефоне до ~40–80 КБ, поэтому запрос проходит и на 2G.
 import { ask, obj, studentText } from '../server/ai';
 import { body, handle, HttpError, json, limit, str } from '../server/http';
@@ -33,8 +33,10 @@ export const POST = handle(async (req) => {
   const dialog = msgs
     .map((m) => (m.role === 'tutor' ? `Наставник: ${str(m.text, 'text', 2000)}` : `Ученик: ${studentText(str(m.text, 'text', 1000))}`))
     .join('\n');
+  // Текст, который ученик сейчас читает с ИИ-ответчиком (необязательно)
+  const doc = typeof b.context === 'string' && b.context.trim() ? `<document>\n${str(b.context, 'context', 6000).replace(/<\/?document>/gi, '')}\n</document>\n\n` : '';
   // формат ask() из части B: работает и с Claude, и с Gemini
-  const content = { text: dialog ? `Диалог до этого момента:\n${dialog}\n\nОтветь наставником.` : 'Ученик прислал фото задачи. Начни разбор.', imageBase64: image };
+  const content = { text: doc + (dialog ? `Диалог до этого момента:\n${dialog}\n\nОтветь как ИИ-ответчик.` : 'Ученик прислал фото задачи. Начни разбор.'), imageBase64: image };
 
   const r = await ask<{ reply: string; stage: 'question' | 'solved' | 'unreadable' }>({
     prompt: 'tutor',

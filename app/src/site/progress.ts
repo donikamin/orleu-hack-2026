@@ -2,6 +2,8 @@
 // Попытки по заданиям базы хранятся в формате контракта Attempt, чтобы их можно было упаковать в QR.
 import { useSyncExternalStore } from 'react';
 import type { Attempt } from '@shared/types';
+import { addXp, xpFor } from './streak';
+import { track } from './analytics';
 
 export interface SiteAttempt extends Attempt {
   kind: 'reading' | 'math' | 'text' | 'lesson';
@@ -30,6 +32,8 @@ export function recordAttempt(a: SiteAttempt) {
     /* приватный режим: прогресс живёт до закрытия вкладки */
   }
   listeners.forEach((l) => l());
+  addXp(xpFor(a.kind, a.score)); // очки опыта и серия дней
+  track('task_answered', { task: a.taskId, kind: a.kind, score: a.score, hints: a.hintsUsed, confidence: a.confidence });
 }
 
 export function resetProgress() {

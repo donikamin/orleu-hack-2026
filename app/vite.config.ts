@@ -52,9 +52,25 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,json,woff2,png}'],
         // лендинг /home/ — отдельный сайт со своими ассетами, в офлайн-кэш приложения он не нужен
-        globIgnores: ['home/**'],
+        // 3D-ответчик (three.js + модель ~3 МБ) не качается заранее: только когда ученик откроет экран, потом лежит в кэше
+        // аналитика (posthog-js) грузится только при сети — в офлайн-кэш ей не нужно
+        // ИИ без интернета (WebLLM, 6 МБ) и распознавание речи на устройстве (Whisper + onnxruntime, 27 МБ) — тоже только по запросу
+        globIgnores: ['home/**', 'assets/TalkingAvatar-*.js', 'assets/draco_decoder-*', 'assets/module-*.js', 'avatars/**', 'assets/llm.worker-*', 'assets/stt.worker-*', 'assets/ort-*'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//, /^\/home\//],
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.pathname.startsWith('/avatars/') || /\/assets\/TalkingAvatar-.*\.js$/.test(url.pathname),
+            handler: 'CacheFirst',
+            options: { cacheName: 'oqy-3d', expiration: { maxEntries: 8 } },
+          },
+          {
+            // движки ИИ без интернета и распознавания речи: скачались один раз — дальше работают без сети
+            urlPattern: ({ url }) => /\/assets\/(llm\.worker|stt\.worker|ort-)/.test(url.pathname),
+            handler: 'CacheFirst',
+            options: { cacheName: 'oqy-ai-engines', expiration: { maxEntries: 10 } },
+          },
+        ],
       },
     }),
   ],

@@ -56,7 +56,7 @@ export default function SiteTrain() {
     const solved = MATH.filter((m) => done.has(m.id)).length + mixes.filter((m) => done.has(m.id)).length;
     return (
       <section className="app-screen" aria-labelledby="math-h">
-        <header className="app-head">
+        <header className="app-head page-banner page-banner--math">
           <span className="chip chip--math">Математика из жизни</span>
           <h1 id="math-h" className="app-title">Считай, как во взрослой жизни</h1>
           <p className="app-sub">Рассрочка, тарифы, скидки, ремонт, урожай, графики. Решено: <b className="text-[var(--s-ink)]">{solved} из {MATH.length + mixes.length}</b>.</p>
@@ -88,7 +88,7 @@ export default function SiteTrain() {
 
   return (
     <section className="app-screen" aria-labelledby="train-h">
-      <header className="app-head">
+      <header className="app-head page-banner page-banner--read">
         <span className="chip chip--read">Чтение · PISA</span>
         <h1 id="train-h" className="app-title">Найди. Пойми. Оцени.</h1>
         <p className="app-sub">Расписания, инструкции, новости и рассылки. Сначала отметь уверенность, потом отвечай — ошибся, получишь подсказку, а не ответ.</p>

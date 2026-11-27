@@ -109,6 +109,29 @@ export async function askTutor(r: TutorRequest): Promise<{ text: string; source:
   }
 }
 
+/** ИИ-ответчик через Ollama школы (компьютер учителя в Wi-Fi класса). null — сервер Ollama недоступен. */
+export async function askOllama(messages: { role: 'user' | 'assistant'; content: string }[], system: string): Promise<string | null> {
+  const s = getAi();
+  if (s.mode !== 'local') return null;
+  try {
+    const res = await withTimeout(
+      (signal) =>
+        fetch(`${s.ollamaUrl.replace(/\/$/, '')}/api/chat`, {
+          method: 'POST',
+          signal,
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ model: s.model, stream: false, options: { temperature: 0.4, num_predict: 260 }, messages: [{ role: 'system', content: system }, ...messages.slice(-6)] }),
+        }),
+      30000,
+    );
+    if (!res.ok) return null;
+    const j = (await res.json()) as { message?: { content?: string } };
+    return j.message?.content?.trim() || null;
+  } catch {
+    return null;
+  }
+}
+
 /** Проверка связи с локальной моделью для экрана настроек. */
 export async function pingOllama(url: string): Promise<string[] | null> {
   try {
