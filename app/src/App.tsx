@@ -1,7 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { Link, Navigate, NavLink, Outlet, Route, Routes } from 'react-router';
 import { useOnline } from './teacher/hooks';
-import StudentPlaceholder from './student/StudentPlaceholder';
 import { ThemeToggle } from './ui/ThemeToggle';
 import SiteShell from './site/SiteShell';
 import SiteHome from './site/SiteHome';
@@ -19,6 +18,9 @@ const SiteLessons = lazy(() => import('./site/SiteLessons'));
 const SiteMe = lazy(() => import('./site/SiteMe'));
 const SiteTutor = lazy(() => import('./site/SiteTutor'));
 const SiteTools = lazy(() => import('./site/SiteTools'));
+
+// Приложение ученика (часть A): отдельный кусок, кэшируется PWA и работает офлайн.
+const StudentApp = lazy(() => import('./student/StudentApp'));
 
 // Экраны учителя грузятся отдельными кусками и кэшируются PWA для офлайна.
 const TeacherHome = lazy(() => import('./teacher/pages/TeacherHome'));
@@ -108,7 +110,7 @@ export default function App() {
         <Route path="tools" element={<SiteTools />} />
       </Route>
       <Route element={<AppLayout />}>
-        <Route path="/student/*" element={<StudentPlaceholder />} />
+        <Route path="/student/*" element={<StudentApp />} />
         <Route path="/teacher" element={<TeacherHome />} />
         <Route path="/teacher/:code" element={<ClassLayout />}>
           <Route index element={<ClassMap />} />
